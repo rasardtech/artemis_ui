@@ -25,7 +25,7 @@
                         string="NEVVA Planner'da Aç"
                         class="btn-secondary"
                         icon="fa-cube"
-                        invisible="not nevva_planner_url"/>
+                        invisible="not nevva_project_id and not nevva_planner_url"/>
                 <button name="action_open_nevva_ar"
                         type="object"
                         string="AR'da Gör"
@@ -45,17 +45,13 @@
                 <page string="NEVVA Tasarım" name="nevva_design"
                       invisible="not nevva_project_id">
                     <group>
-                        <group string="Görseller">
-                            <field name="nevva_render_image" widget="image"
-                                   class="oe_avatar" nolabel="1"
-                                   options="{'size': [400, 300]}"/>
-                            <field name="nevva_screenshot" widget="image"
-                                   class="oe_avatar" nolabel="1"
-                                   options="{'size': [400, 300]}"/>
+                        <group string="Proje">
+                            <field name="nevva_project_id" readonly="1"/>
+                            <field name="opportunity_id" string="Kaynak CRM Fırsatı"
+                                   readonly="1" invisible="not opportunity_id"/>
+                            <field name="nevva_pending" readonly="1"/>
                         </group>
                         <group string="Bağlantılar">
-                            <field name="nevva_pending" readonly="1"/>
-                            <field name="nevva_project_id" readonly="1"/>
                             <field name="nevva_planner_url" widget="url" readonly="1"
                                    invisible="not nevva_planner_url"/>
                             <field name="nevva_ar_url" widget="url" readonly="1"
@@ -64,14 +60,24 @@
                                    invisible="not nevva_render_url"/>
                         </group>
                     </group>
+                    <group string="Görseller">
+                        <field name="nevva_render_image" widget="image"
+                               options="{'size': [400, 300]}"
+                               invisible="not nevva_render_image"/>
+                        <field name="nevva_screenshot" widget="image"
+                               options="{'size': [400, 300]}"
+                               invisible="not nevva_screenshot"/>
+                    </group>
                     <group string="Sipariş PDF" invisible="not nevva_pdf">
                         <field name="nevva_pdf_filename" invisible="1"/>
                         <field name="nevva_pdf" widget="pdf_viewer"
-                               filename="nevva_pdf_filename" nolabel="1"/>
+                               filename="nevva_pdf_filename"/>
                     </group>
-                    <group string="Proje Verisi (JSON)"
+                    <group string="Proje Verisi"
                            invisible="not nevva_project_json">
-                        <field name="nevva_project_json" nolabel="1" readonly="1"/>
+                        <field name="nevva_project_json_filename" invisible="1"/>
+                        <field name="nevva_project_json_file"
+                               filename="nevva_project_json_filename" readonly="1"/>
                     </group>
                 </page>
             </xpath>
