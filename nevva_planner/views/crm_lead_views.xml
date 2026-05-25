@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="crm_lead_view_form_nevva" model="ir.ui.view">
+        <field name="name">crm.lead.form.nevva.planner</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_open_nevva_planner"
+                        type="object"
+                        string="NEVVA Planner"
+                        class="btn-primary"
+                        icon="fa-cube"/>
+            </xpath>
+            <!-- Bağlı NEVVA proje linki — oluşturulduktan sonra görünür/tıklanır. -->
+            <xpath expr="//field[@name='email_from']" position="after">
+                <field name="nevva_planner_url" widget="url"
+                       readonly="1" invisible="not nevva_planner_url"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

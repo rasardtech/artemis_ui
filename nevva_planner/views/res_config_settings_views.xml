@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_nevva" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.nevva.planner</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="NEVVA Planner" string="NEVVA Planner" name="nevva_planner">
+                    <block title="NEVVA Planner Entegrasyonu"
+                           name="nevva_planner_settings">
+                        <setting string="NEVVA URL"
+                                 help="NEVVA planner adresi, örn. https://planner.electro-cuisine.be">
+                            <field name="nevva_url"
+                                   placeholder="https://planner.electro-cuisine.be"/>
+                        </setting>
+                        <setting string="Inbound Secret"
+                                 help="NEVVA .env'deki ODOO_INBOUND_SECRET ile aynı olmalı">
+                            <field name="nevva_inbound_secret" password="True"/>
+                        </setting>
+                        <setting string="Bağlantı testi"
+                                 help="Kaydettikten sonra NEVVA'ya ping atar">
+                            <button name="action_test_nevva_connection"
+                                    type="object"
+                                    string="NEVVA bağlantısını test et"
+                                    class="btn-secondary"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>
