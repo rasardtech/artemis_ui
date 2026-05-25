@@ -75,6 +75,7 @@
                     </group>
                     <group string="Proje Verisi"
                            invisible="not nevva_project_json">
+                        <field name="nevva_project_json" invisible="1"/>
                         <field name="nevva_project_json_filename" invisible="1"/>
                         <field name="nevva_project_json_file"
                                filename="nevva_project_json_filename" readonly="1"/>
