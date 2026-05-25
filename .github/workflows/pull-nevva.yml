@@ -1,0 +1,32 @@
+name: Pull NEVVA module from electro-cuisine-agent
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 * * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull nevva_planner from source
+        env:
+          SRC_TOKEN: ${{ secrets.SECRET }}
+        run: |
+          set -euo pipefail
+          git config user.name  "nevva-sync[bot]"
+          git config user.email "sync@electro-cuisine.be"
+          src="https://x-access-token:${SRC_TOKEN}@github.com/Volkanb42/electro-cuisine-agent.git"
+          tmp="$(mktemp -d)"
+          git clone --depth 1 --branch staging "$src" "$tmp"
+          rm -rf ./nevva_planner
+          cp -r "$tmp/odoo_module/nevva_planner" ./nevva_planner
+          find . -name __pycache__ -type d -prune -exec rm -rf {} + 2>/dev/null || true
+          find . -name '*.pyc' -delete 2>/dev/null || true
+          git add nevva_planner
+          git diff --cached --quiet && { echo "değişiklik yok"; exit 0; }
+          git commit -m "Pull NEVVA module from electro-cuisine-agent"
+          git push
