@@ -29,4 +29,9 @@ jobs:
           git add nevva_planner
           git diff --cached --quiet && { echo "değişiklik yok"; exit 0; }
           git commit -m "Pull NEVVA module from electro-cuisine-agent"
-          git push
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin "$(git rev-parse --abbrev-ref HEAD)" && git push && exit 0
+            echo "push attempt $i failed, retrying..."
+            sleep $((RANDOM % 5 + 2))
+          done
+          echo "push failed after retries"; exit 1
