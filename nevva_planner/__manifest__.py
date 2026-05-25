@@ -1,6 +1,6 @@
 {
     "name": "NEVVA Planner Integration",
-    "version": "17.0.1.2.2",
+    "version": "17.0.1.2.3",
     "summary": "CRM lead'den NEVVA 3D mutfak planner'ını açar + tasarım sekmesi",
     "description": """
 NEVVA Planner Integration (Full)
@@ -28,7 +28,7 @@ Kurulum:
     "category": "Sales/CRM",
     "author": "Electro & Cuisine",
     "license": "LGPL-3",
-    "depends": ["crm", "sale"],
+    "depends": ["crm", "sale", "sale_crm"],
     "data": [
         "views/res_config_settings_views.xml",
         "views/crm_lead_views.xml",
