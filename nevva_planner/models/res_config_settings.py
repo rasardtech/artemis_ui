@@ -20,6 +20,18 @@ class ResConfigSettings(models.TransientModel):
         # mimarisi); UI seviyesi yine de yetkisiz görüntülemeyi engeller.
         groups="base.group_system",
     )
+    nevva_lock_sale_order_lines = fields.Boolean(
+        string="NEVVA tasarım satırlarını kilitle",
+        config_parameter="nevva_planner.lock_sale_order_lines",
+        default=False,
+        help="Açık ise satıcı (sistem yöneticisi olmayan) NEVVA-bağlı "
+             "sale.order satırlarını manuel düzenleyemez — değişiklik için "
+             "planner'a dönüp 'Envoyer' kullanmak zorunda. NEVVA backend "
+             "XMLRPC çağrıları context flag'i ile bypass'lar.\n\n"
+             "DEFAULT KAPALI: bu kısıt aktivasyon sırasında 502'ye yol "
+             "açabilir (XMLRPC user'ın yetkisi/context propagation'a göre); "
+             "test ortamında test edip emin olduktan sonra açın.",
+    )
 
     def action_test_nevva_connection(self):
         """NEVVA /health uç noktasına ping atar; sonucu bildirimle gösterir."""

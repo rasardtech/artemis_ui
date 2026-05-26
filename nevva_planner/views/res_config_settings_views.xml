@@ -25,6 +25,10 @@
                                     string="NEVVA bağlantısını test et"
                                     class="btn-secondary"/>
                         </setting>
+                        <setting string="Satıcı satır kilidi"
+                                 help="Açıkken satıcı NEVVA-bağlı sale.order satırlarını manuel düzenleyemez (değişiklik için planner'a dön + Envoyer). XMLRPC akışları context bypass ile etkilenmez. KAPALIYKEN serbestlik var ama veri tutarlılığı satıcıya bağlı.">
+                            <field name="nevva_lock_sale_order_lines"/>
+                        </setting>
                     </block>
                 </app>
             </xpath>

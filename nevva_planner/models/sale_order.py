@@ -177,27 +177,36 @@ class SaleOrder(models.Model):
 
 class SaleOrderLine(models.Model):
     """Satıcı (sıradan kullanıcı) NEVVA'dan gelen sale.order satırlarını ELLE
-    DÜZENLEYEMEZ. Sadece görüntüleme; değişiklik yapmak için NEVVA planner'a
-    dönüp orada düzenleyip yeniden gönderir. Bu sayede Odoo ile NEVVA arasında
-    veri tutarlılığı korunur (fiyat/adet/ürün/satır eklenmesi/silinmesi tek
-    kanaldan, NEVVA'dan gelir).
+    DÜZENLEYEMEZ — sadece görüntüleme; değişiklik için NEVVA planner'a dönüp
+    'Envoyer' ile yeniden gönderir. Tek kanaldan akan veri = NEVVA ↔ Odoo
+    tutarlılığı.
 
-    Bypass:
-      a) base.group_system (sistem yöneticisi) — acil hata düzeltme için
-      b) context['nevva_sync'] == True — NEVVA backend XMLRPC çağrıları bu
-         flag'i set eder; manuel Odoo UI'sinden gelen yazma denemeleri
-         context'i set edemediği için bu bypass yalnız sunucu-sunucu
-         entegrasyonunda geçerlidir. (Bypass-a) tek başına yetmez çünkü NEVVA
-         entegrasyon kullanıcısı her zaman sistem yöneticisi olmayabilir.
+    Aktivasyon: `ir.config_parameter` 'nevva_planner.lock_sale_order_lines'
+    True ise guard aktif; aksi halde tamamen bypass (default davranış). Yeni
+    kurulumlar tarafından unintended UI bozulma yaşanmasın diye DEFAULT KAPALI.
+    Admin Settings → NEVVA Planner → "Satır kilidi" toggle'ından açar.
+
+    Aktifken bypass'lar:
+      a) base.group_system (sistem yöneticisi) — acil düzeltme yetkisi
+      b) context['nevva_sync'] == True — NEVVA backend XMLRPC çağrılarında
+         set edilir; manuel UI bunu set edemez → tek-yön invariant korunur
 
     Etki: write / create / unlink üzerinde guard. Order satır-dışı alanlar
-    (state, fiscal_position vb.) etkilenmez."""
+    (state, fiscal_position, vb.) etkilenmez."""
     _inherit = "sale.order.line"
 
+    def _nevva_lock_enabled(self):
+        """Config flag — admin açmadıysa guard tamamen kapalı."""
+        try:
+            param = self.env["ir.config_parameter"].sudo().get_param(
+                "nevva_planner.lock_sale_order_lines", "False",
+            )
+            return str(param).lower() in ("1", "true", "yes")
+        except Exception:
+            return False
+
     def _nevva_should_skip(self):
-        """True → guard atlanır. NEVVA backend `with_context(nevva_sync=True)`
-        ile çağırır; ya da kullanıcı base.group_system grubundaysa (acil
-        düzeltme yetkisi)."""
+        """True → guard atlanır. NEVVA backend context flag'i veya admin user."""
         if self.env.context.get("nevva_sync"):
             return True
         return self.env.user.has_group("base.group_system")
@@ -209,7 +218,7 @@ class SaleOrderLine(models.Model):
                 "değiştirebilir.)")
 
     def write(self, vals):
-        if not self._nevva_should_skip():
+        if self._nevva_lock_enabled() and not self._nevva_should_skip():
             for line in self:
                 if line.order_id and line.order_id.nevva_project_id:
                     raise UserError(self._nevva_locked_msg())
@@ -217,7 +226,7 @@ class SaleOrderLine(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        if not self._nevva_should_skip():
+        if self._nevva_lock_enabled() and not self._nevva_should_skip():
             order_ids = {v.get("order_id") for v in vals_list if v.get("order_id")}
             if order_ids:
                 nevva_orders = self.env["sale.order"].browse(list(order_ids)).filtered(
@@ -228,7 +237,7 @@ class SaleOrderLine(models.Model):
         return super().create(vals_list)
 
     def unlink(self):
-        if not self._nevva_should_skip():
+        if self._nevva_lock_enabled() and not self._nevva_should_skip():
             for line in self:
                 if line.order_id and line.order_id.nevva_project_id:
                     raise UserError(self._nevva_locked_msg())
