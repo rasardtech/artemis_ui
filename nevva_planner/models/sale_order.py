@@ -73,7 +73,8 @@ class SaleOrder(models.Model):
                 order.nevva_project_json_filename = False
 
     def action_open_nevva_planner_so(self):
-        """Bu teklifin tasarımını NEVVA planner'da yeni sekmede açar.
+        """Bu teklifin tasarımını NEVVA planner'da Odoo içinde (v1.6.0+) full-screen
+        client action olarak açar.
 
         /api/odoo/reopen?project_id=...&ts=...&sig=... — HMAC-signed URL
         (audit 1.1): secret URL'de görünmez, yalnızca tek seferlik imza
@@ -84,7 +85,7 @@ class SaleOrder(models.Model):
         import hashlib
         import hmac as _hmac
         import time as _time
-        from urllib.parse import urlencode, quote
+        from urllib.parse import urlencode
         self.ensure_one()
         project_id = self.nevva_project_id or self.client_order_ref or ""
         if project_id:
@@ -102,12 +103,20 @@ class SaleOrder(models.Model):
                 query = urlencode({
                     "project_id": project_id, "ts": ts, "sig": sig,
                 })
+                url = "%s/api/odoo/reopen?%s" % (base, query)
+                # Client action ile Odoo içinde aç (yeni sekme yerine).
                 return {
-                    "type": "ir.actions.act_url",
-                    "url": "%s/api/odoo/reopen?%s" % (base, query),
-                    "target": "new",
+                    "type": "ir.actions.client",
+                    "tag":  "nevva_planner.open",
+                    "name": "NEVVA Planner — %s" % (self.name or ""),
+                    "params": {
+                        "url":          url,
+                        "project_id":   project_id,
+                        "parent_model": "sale.order",
+                        "parent_id":    self.id,
+                    },
                 }
-        # Geriye dönük: proje id yoksa kaydedilmiş URL'i dene.
+        # Geriye dönük: proje id yoksa kaydedilmiş URL'i dene (eski sekme akışı).
         return self._nevva_open_url(self.nevva_planner_url, "NEVVA planner")
 
     def action_open_nevva_ar(self):

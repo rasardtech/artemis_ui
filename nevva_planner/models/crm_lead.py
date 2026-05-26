@@ -123,8 +123,17 @@ class CrmLead(models.Model):
             "NEVVA planner açıldı: lead=%s, project_id=%s",
             self.id, (data or {}).get("project_id", "?"),
         )
+        # v1.6.0+: Odoo client action ile FULL-SCREEN iframe'de aç — satıcı
+        # Odoo navigation'da kalır, "Envoyer" sonrası postMessage ile action
+        # kapanıp lead form'una geri döner.
         return {
-            "type": "ir.actions.act_url",
-            "url": url,
-            "target": "new",
+            "type": "ir.actions.client",
+            "tag":  "nevva_planner.open",
+            "name": "NEVVA Planner",
+            "params": {
+                "url":          url,
+                "project_id":   (data or {}).get("project_id"),
+                "parent_model": "crm.lead",
+                "parent_id":    self.id,
+            },
         }

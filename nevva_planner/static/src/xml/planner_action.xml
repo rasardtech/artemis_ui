@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!--
+        NEVVA Planner client action template — full-screen iframe.
+
+        Layout:
+          - Üstte Odoo navigation bar (otomatik, OwlComponent değil)
+          - İçeride: error mesajı VEYA iframe (loading overlay ile)
+          - Iframe %100 genişlik & yükseklik — satıcıya en geniş tasarım alanı
+    -->
+    <t t-name="nevva_planner.PlannerAction">
+        <div class="o_nevva_planner_action" style="position: relative; width: 100%; height: 100%; min-height: 600px; background: #f8f9fa;">
+
+            <!-- Hata durumu — URL gelmediyse veya planner load fail olduysa -->
+            <div t-if="state.error" style="padding: 40px; text-align: center; color: #991b1b;">
+                <h3>⚠ Planner açılamadı</h3>
+                <p t-esc="state.error"/>
+                <button class="btn btn-secondary mt-3" t-on-click="_close">Geri dön</button>
+            </div>
+
+            <!-- Loading overlay — iframe yüklenene veya 'planner_ready' postMessage'ı gelene kadar -->
+            <div t-if="state.loading and !state.error"
+                 style="position: absolute; inset: 0; display: flex; flex-direction: column;
+                        align-items: center; justify-content: center; background: rgba(255,255,255,0.92);
+                        z-index: 10; gap: 12px;">
+                <div style="width: 40px; height: 40px; border: 3px solid #e5e7eb;
+                            border-top-color: #f59e0b; border-radius: 50%;
+                            animation: spin 0.8s linear infinite;"/>
+                <div style="color: #6b7280; font-size: 13px;">NEVVA Planner yükleniyor…</div>
+            </div>
+
+            <!-- Asıl iframe — tüm planner SPA burada koşar -->
+            <iframe t-if="!state.error"
+                    t-ref="iframe"
+                    t-att-src="state.url"
+                    t-on-load="_onIframeLoad"
+                    style="width: 100%; height: 100%; min-height: 600px; border: 0; display: block;"
+                    allow="clipboard-read; clipboard-write; fullscreen; microphone; camera; xr-spatial-tracking"
+                    title="NEVVA Planner"/>
+        </div>
+    </t>
+
+</templates>
