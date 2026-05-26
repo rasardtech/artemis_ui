@@ -126,14 +126,27 @@ class CrmLead(models.Model):
         # v1.6.0+: Odoo client action ile FULL-SCREEN iframe'de aç — satıcı
         # Odoo navigation'da kalır, "Envoyer" sonrası postMessage ile action
         # kapanıp lead form'una geri döner.
+        #
+        # Shotgun param passing: Odoo 17.x versiyonları arasında client action
+        # props yapısı farklı olabiliyor. Üç farklı yere de yazıyoruz, JS
+        # tarafı hangisini bulursa kullanır.
+        _payload = {
+            "url":          str(url),
+            "project_id":   str((data or {}).get("project_id") or ""),
+            "parent_model": "crm.lead",
+            "parent_id":    int(self.id),
+        }
+        _logger.info("NEVVA client action return payload: %s", _payload)
         return {
-            "type": "ir.actions.client",
-            "tag":  "nevva_planner.open",
-            "name": "NEVVA Planner",
-            "params": {
-                "url":          url,
-                "project_id":   (data or {}).get("project_id"),
-                "parent_model": "crm.lead",
-                "parent_id":    self.id,
+            "type":    "ir.actions.client",
+            "tag":     "nevva_planner.open",
+            "name":    "NEVVA Planner",
+            "target":  "current",
+            "params":  _payload,
+            "context": {
+                "nevva_planner_url":          _payload["url"],
+                "nevva_planner_project_id":   _payload["project_id"],
+                "nevva_planner_parent_model": _payload["parent_model"],
+                "nevva_planner_parent_id":    _payload["parent_id"],
             },
         }

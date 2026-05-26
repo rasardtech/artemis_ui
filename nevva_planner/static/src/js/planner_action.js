@@ -26,22 +26,50 @@ class NevvaPlannerAction extends Component {
     static props = ["*"];
 
     setup() {
-        // Odoo 17 client action: props yapısı versiyona göre değişebiliyor.
-        // Hem props.action.params hem props doğrudan params olabilir; ikisini
-        // de dene + console'a yapıyı yaz (yanlış path'te boş gelirse debug için).
-        const action = (this.props && this.props.action) || this.props || {};
-        const params = (action && action.params) || this.props.params || {};
+        // Odoo 17.x versiyonları arasında client action props yapısı değişiyor.
+        // 6 farklı path'den URL'i ara: action.params, props.params, action.context
+        // (nevva_planner_url key'i ile), props.context, action.kwargs, root props.
+        // Python tarafı da hem params hem context'e yazıyor → bir tanesi tutar.
+        const p = this.props || {};
+        const action = p.action || {};
+        const ctx = action.context || p.context || {};
+
+        const url =
+            (action.params && action.params.url) ||
+            (p.params && p.params.url) ||
+            ctx.nevva_planner_url ||
+            p.url ||
+            "";
+        const projectId =
+            (action.params && action.params.project_id) ||
+            (p.params && p.params.project_id) ||
+            ctx.nevva_planner_project_id ||
+            null;
+        const parentModel =
+            (action.params && action.params.parent_model) ||
+            (p.params && p.params.parent_model) ||
+            ctx.nevva_planner_parent_model ||
+            null;
+        const parentId =
+            (action.params && action.params.parent_id) ||
+            (p.params && p.params.parent_id) ||
+            ctx.nevva_planner_parent_id ||
+            null;
+
         // eslint-disable-next-line no-console
-        console.log("[NEVVA Planner action] props =", this.props, "resolved params =", params);
+        console.log("[NEVVA Planner action] props =", this.props,
+                    "resolved url =", url, "project =", projectId);
 
         this.state = useState({
-            url: params.url || "",
-            loading: !!params.url,
+            url: url,
+            loading: !!url,
             error: null,
         });
-        this.parentModel = params.parent_model || null;   // 'crm.lead' veya 'sale.order'
-        this.parentId    = params.parent_id    || null;
-        this.expectedOrigin = this._origin(params.url);
+        this.parentModel = parentModel;
+        this.parentId    = parentId;
+        this.expectedOrigin = this._origin(url);
+        // params reference for error fallback
+        const params = { url, project_id: projectId, parent_model: parentModel, parent_id: parentId };
 
         this.iframeRef = useRef("iframe");
         this._onMessage = this._onMessage.bind(this);

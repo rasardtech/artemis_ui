@@ -105,15 +105,26 @@ class SaleOrder(models.Model):
                 })
                 url = "%s/api/odoo/reopen?%s" % (base, query)
                 # Client action ile Odoo içinde aç (yeni sekme yerine).
+                # Shotgun: params + context her ikisine yaz, JS hangisini
+                # bulursa kullanır (Odoo 17.x props uyumluluğu).
+                _payload = {
+                    "url":          str(url),
+                    "project_id":   str(project_id),
+                    "parent_model": "sale.order",
+                    "parent_id":    int(self.id),
+                }
+                _logger.info("NEVVA client action return payload (SO): %s", _payload)
                 return {
-                    "type": "ir.actions.client",
-                    "tag":  "nevva_planner.open",
-                    "name": "NEVVA Planner — %s" % (self.name or ""),
-                    "params": {
-                        "url":          url,
-                        "project_id":   project_id,
-                        "parent_model": "sale.order",
-                        "parent_id":    self.id,
+                    "type":    "ir.actions.client",
+                    "tag":     "nevva_planner.open",
+                    "name":    "NEVVA Planner — %s" % (self.name or ""),
+                    "target":  "current",
+                    "params":  _payload,
+                    "context": {
+                        "nevva_planner_url":          _payload["url"],
+                        "nevva_planner_project_id":   _payload["project_id"],
+                        "nevva_planner_parent_model": _payload["parent_model"],
+                        "nevva_planner_parent_id":    _payload["parent_id"],
                     },
                 }
         # Geriye dönük: proje id yoksa kaydedilmiş URL'i dene (eski sekme akışı).
