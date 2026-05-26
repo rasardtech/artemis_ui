@@ -13,10 +13,12 @@
         <div class="o_nevva_planner_action" style="position: relative; width: 100%; height: 100%; min-height: 600px; background: #f8f9fa;">
 
             <!-- Hata durumu — URL gelmediyse veya planner load fail olduysa -->
-            <div t-if="state.error" style="padding: 40px; text-align: center; color: #991b1b;">
-                <h3>⚠ Planner açılamadı</h3>
-                <p t-esc="state.error"/>
-                <button class="btn btn-secondary mt-3" t-on-click="_close">Geri dön</button>
+            <div t-if="state.error" style="padding: 40px; text-align: left; color: #991b1b; max-width: 900px; margin: 0 auto;">
+                <h3 style="text-align: center;">⚠ Planner açılamadı</h3>
+                <pre style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; font-size: 12px; white-space: pre-wrap; word-break: break-all; color: #7f1d1d;" t-esc="state.error"/>
+                <div style="text-align: center; margin-top: 16px;">
+                    <button class="btn btn-secondary" t-on-click="_close">Geri dön</button>
+                </div>
             </div>
 
             <!-- Loading overlay — iframe yüklenene veya 'planner_ready' postMessage'ı gelene kadar -->

@@ -54,7 +54,25 @@ class NevvaPlannerAction extends Component {
         });
 
         if (!params.url) {
-            this.state.error = "Planner URL eksik (action params.url boş geldi). Console'da props yapısını görebilirsin.";
+            // Telefondan console açılamıyor → debug bilgisini doğrudan
+            // ekrana yaz. Hangi prop path'inde ne var, JSON olarak göster.
+            let debugInfo = "";
+            try {
+                debugInfo = JSON.stringify({
+                    has_props: !!this.props,
+                    has_props_action: !!(this.props && this.props.action),
+                    has_props_params: !!(this.props && this.props.params),
+                    action_keys: this.props && this.props.action
+                        ? Object.keys(this.props.action) : [],
+                    props_keys: this.props ? Object.keys(this.props) : [],
+                    action_params: this.props && this.props.action
+                        ? this.props.action.params : null,
+                    props_params: this.props ? this.props.params : null,
+                }, null, 2);
+            } catch (e) {
+                debugInfo = "JSON stringify failed: " + e.message;
+            }
+            this.state.error = "Planner URL eksik. Debug:\n" + debugInfo;
         }
     }
 
