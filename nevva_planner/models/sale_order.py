@@ -173,3 +173,51 @@ class SaleOrder(models.Model):
 
         # Odoo 16+ — transaction commit edilince çalışır (write'ı bloklamaz/rollback'lemez)
         self.env.cr.postcommit.add(_do)
+
+
+class SaleOrderLine(models.Model):
+    """Satıcı (sıradan kullanıcı) NEVVA'dan gelen sale.order satırlarını ELLE
+    DÜZENLEYEMEZ. Sadece görüntüleme; değişiklik yapmak için NEVVA planner'a
+    dönüp orada düzenleyip yeniden gönderir. Bu sayede Odoo ile NEVVA arasında
+    veri tutarlılığı korunur (fiyat/adet/ürün/satır eklenmesi/silinmesi tek
+    kanaldan, NEVVA'dan gelir).
+
+    Yalnız sistem yöneticisi (base.group_system) NEVVA-bağlı satırları
+    düzenleyebilir (acil hata düzeltme için). NEVVA backend kendi XMLRPC
+    çağrılarını admin user ile yapar → otomatik geçer.
+
+    Etki: write / create / unlink üzerinde guard. Order satır-dışı alanlar
+    (state, fiscal_position vb.) etkilenmez."""
+    _inherit = "sale.order.line"
+
+    def _nevva_locked_msg(self):
+        return ("Bu satır NEVVA tasarımına bağlı bir teklife ait — doğrudan "
+                "düzenlenemez. Değişiklik için NEVVA planner'da düzenleyip "
+                "'Envoyer' ile yeniden gönderin. (Sadece yönetici doğrudan "
+                "değiştirebilir.)")
+
+    def write(self, vals):
+        if not self.env.user.has_group("base.group_system"):
+            for line in self:
+                if line.order_id and line.order_id.nevva_project_id:
+                    raise UserError(self._nevva_locked_msg())
+        return super().write(vals)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        if not self.env.user.has_group("base.group_system"):
+            order_ids = {v.get("order_id") for v in vals_list if v.get("order_id")}
+            if order_ids:
+                nevva_orders = self.env["sale.order"].browse(list(order_ids)).filtered(
+                    lambda o: o.nevva_project_id,
+                )
+                if nevva_orders:
+                    raise UserError(self._nevva_locked_msg())
+        return super().create(vals_list)
+
+    def unlink(self):
+        if not self.env.user.has_group("base.group_system"):
+            for line in self:
+                if line.order_id and line.order_id.nevva_project_id:
+                    raise UserError(self._nevva_locked_msg())
+        return super().unlink()
