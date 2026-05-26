@@ -44,9 +44,16 @@ class CrmLead(models.Model):
             )
 
         partner = self.partner_id
+        # Dil önceliği:
+        #   1) Müşteri (partner) dili — planner bu kişiyle paylaşılacak
+        #   2) Butona basan satıcının dili — kontak dili yoksa satıcı
+        #      Odoo kendi dilinde devam etsin (tasarımı yapan kişi rahat olsun)
+        #   3) Fallback "fr" — multi-dil hiç yoksa
         lang = "fr"
         if partner and partner.lang:
             lang = partner.lang[:2]
+        elif self.env.user.lang:
+            lang = self.env.user.lang[:2]
 
         # Müşteri bilgisi çoğu lead'de bağlı partner kaydındadır — lead alanları
         # boşsa partner'dan doldur (planner "Envoyer" formu prefill olsun).
