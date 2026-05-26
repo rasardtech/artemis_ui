@@ -72,6 +72,12 @@ class SaleOrder(models.Model):
                 order.nevva_project_json_file = False
                 order.nevva_project_json_filename = False
 
+    def nevva_get_planner_payload(self):
+        """JS client action stateless fetch — bkz crm_lead.nevva_get_planner_payload."""
+        self.ensure_one()
+        action = self.action_open_nevva_planner_so()
+        return action.get("params", {}) if isinstance(action, dict) else {}
+
     def action_open_nevva_planner_so(self):
         """Bu teklifin tasarımını NEVVA planner'da Odoo içinde (v1.6.0+) full-screen
         client action olarak açar.

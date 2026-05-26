@@ -25,6 +25,18 @@ class CrmLead(models.Model):
         help="Son açılan NEVVA planner linki (bu lead için).",
     )
 
+    def nevva_get_planner_payload(self):
+        """JS client action stateless fetch:
+        URL hash'ten action_open_nevva_planner çağrısı yapılınca Odoo,
+        in-memory action dict'i URL bazlı tag'la yeniden çözüyor → params
+        kayboluyordu. Bu method JS'in RPC ile params'ı yeniden çekmesini sağlar.
+        Refresh/share/back-forward sonrası da çalışır."""
+        self.ensure_one()
+        action = self.action_open_nevva_planner()
+        # action_open_nevva_planner zaten ir.actions.client dönüyor; sadece
+        # params alt-dict'ini extract et — JS bunu doğrudan kullansın.
+        return action.get("params", {}) if isinstance(action, dict) else {}
+
     def action_open_nevva_planner(self):
         """NEVVA'da bu lead için bir planner projesi başlatır ve yeni sekmede açar.
 
