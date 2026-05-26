@@ -26,7 +26,14 @@ class NevvaPlannerAction extends Component {
     static props = ["*"];
 
     setup() {
-        const params = (this.props.action && this.props.action.params) || {};
+        // Odoo 17 client action: props yapısı versiyona göre değişebiliyor.
+        // Hem props.action.params hem props doğrudan params olabilir; ikisini
+        // de dene + console'a yapıyı yaz (yanlış path'te boş gelirse debug için).
+        const action = (this.props && this.props.action) || this.props || {};
+        const params = (action && action.params) || this.props.params || {};
+        // eslint-disable-next-line no-console
+        console.log("[NEVVA Planner action] props =", this.props, "resolved params =", params);
+
         this.state = useState({
             url: params.url || "",
             loading: !!params.url,
@@ -47,7 +54,7 @@ class NevvaPlannerAction extends Component {
         });
 
         if (!params.url) {
-            this.state.error = "Planner URL eksik (action params.url boş geldi).";
+            this.state.error = "Planner URL eksik (action params.url boş geldi). Console'da props yapısını görebilirsin.";
         }
     }
 
