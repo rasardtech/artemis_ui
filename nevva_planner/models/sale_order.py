@@ -75,22 +75,36 @@ class SaleOrder(models.Model):
     def action_open_nevva_planner_so(self):
         """Bu teklifin tasarımını NEVVA planner'da yeni sekmede açar.
 
-        LITE modülle aynı kaynak-bilinçli yolu kullanır: /api/odoo/reopen
-        proje id'siyle (client_order_ref/nevva_project_id) → planner DB'den
-        TAZE token alıp açar. Kaydedilmiş nevva_planner_url'e bağımlı değil
-        (boş/bayat olsa bile çalışır)."""
+        /api/odoo/reopen?project_id=...&ts=...&sig=... — HMAC-signed URL
+        (audit 1.1): secret URL'de görünmez, yalnızca tek seferlik imza
+        gönderilir, 5 dakika içinde geçerlidir. Browser history / proxy log
+        sızıntı yüzeyi minimize edilir.
+
+        project_id URL-encode edilir (audit 1.4)."""
+        import hashlib
+        import hmac as _hmac
+        import time as _time
+        from urllib.parse import urlencode, quote
         self.ensure_one()
         project_id = self.nevva_project_id or self.client_order_ref or ""
         if project_id:
             from .crm_lead import _nevva_origin
             icp = self.env["ir.config_parameter"].sudo()
             base = _nevva_origin(icp.get_param("nevva_planner.url"))
-            secret = icp.get_param("nevva_planner.inbound_secret") or ""
+            secret = (icp.get_param("nevva_planner.inbound_secret") or "").strip()
             if base and secret:
+                ts = int(_time.time())
+                sig = _hmac.new(
+                    secret.encode(),
+                    ("%s:%d" % (project_id, ts)).encode(),
+                    hashlib.sha256,
+                ).hexdigest()[:32]
+                query = urlencode({
+                    "project_id": project_id, "ts": ts, "sig": sig,
+                })
                 return {
                     "type": "ir.actions.act_url",
-                    "url": "%s/api/odoo/reopen?project_id=%s&secret=%s" % (
-                        base, project_id, secret),
+                    "url": "%s/api/odoo/reopen?%s" % (base, query),
                     "target": "new",
                 }
         # Geriye dönük: proje id yoksa kaydedilmiş URL'i dene.

@@ -11,4 +11,8 @@ class ResPartner(models.Model):
              "doğrulansa bile B2B planner'a alınmaz.",
         index=True,
         default=False,
+        # Audit 1.6: Yetki yükseltme önlemi — yalnızca satış yöneticileri B2B
+        # erişimi verebilir. Sıradan satış elemanı/intern kontağı kendi
+        # işaretleyemez. Read herkese açık (kontak panelinde durum görünür).
+        groups="sales_team.group_sale_manager",
     )

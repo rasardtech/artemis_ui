@@ -15,6 +15,10 @@ class ResConfigSettings(models.TransientModel):
         string="NEVVA Inbound Secret",
         config_parameter="nevva_planner.inbound_secret",
         help="NEVVA .env'deki ODOO_INBOUND_SECRET ile birebir aynı olmalı.",
+        # Audit 1.2: secret form UI'da yalnızca system admin'e görünür.
+        # NOT: ir.config_parameter kaydı kod erişimine açık kalır (Odoo
+        # mimarisi); UI seviyesi yine de yetkisiz görüntülemeyi engeller.
+        groups="base.group_system",
     )
 
     def action_test_nevva_connection(self):

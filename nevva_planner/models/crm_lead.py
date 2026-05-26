@@ -61,7 +61,12 @@ class CrmLead(models.Model):
 
         # Butona basan satıcı → planner ayrı login istemesin, teklif doğru
         # satıcıya atansın (NEVVA project.staff_email + sale.order.user_id).
-        seller_email = self.env.user.email or self.env.user.login or ""
+        # Audit 3.2: email format validation — login (örn. "admin") email
+        # değilse boş gönder (NEVVA tarafında staff_email opsiyonel).
+        import re as _re
+        seller_email = (self.env.user.email or "").strip()
+        if not _re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", seller_email):
+            seller_email = ""
 
         payload = {
             "odoo_lead_id":   str(self.id),
@@ -87,8 +92,19 @@ class CrmLead(models.Model):
 
         redirect = (data or {}).get("redirect_url") or ""
         if not redirect:
-            raise UserError("NEVVA geçerli bir redirect_url döndürmedi: %s" % data)
+            raise UserError("NEVVA geçerli bir redirect_url döndürmedi.")
         url = redirect if redirect.startswith("http") else "%s%s" % (base, redirect)
+        # Audit 8.3: open-redirect koruması — URL ya base ile aynı origin olmalı
+        # ya da relative path (yukarıda base'e eklendi). javascript:/data:/file:
+        # protokolleri reddedilir.
+        from urllib.parse import urlparse
+        target = urlparse(url)
+        if target.scheme not in ("http", "https"):
+            raise UserError(
+                "NEVVA güvensiz redirect_url döndürdü (scheme: %s)" % target.scheme)
+        if urlparse(base).netloc != target.netloc:
+            raise UserError(
+                "NEVVA başka bir host'a redirect döndürdü: %s" % target.netloc)
 
         self.nevva_planner_url = url
         return {
