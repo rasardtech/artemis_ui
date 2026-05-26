@@ -182,13 +182,25 @@ class SaleOrderLine(models.Model):
     veri tutarlılığı korunur (fiyat/adet/ürün/satır eklenmesi/silinmesi tek
     kanaldan, NEVVA'dan gelir).
 
-    Yalnız sistem yöneticisi (base.group_system) NEVVA-bağlı satırları
-    düzenleyebilir (acil hata düzeltme için). NEVVA backend kendi XMLRPC
-    çağrılarını admin user ile yapar → otomatik geçer.
+    Bypass:
+      a) base.group_system (sistem yöneticisi) — acil hata düzeltme için
+      b) context['nevva_sync'] == True — NEVVA backend XMLRPC çağrıları bu
+         flag'i set eder; manuel Odoo UI'sinden gelen yazma denemeleri
+         context'i set edemediği için bu bypass yalnız sunucu-sunucu
+         entegrasyonunda geçerlidir. (Bypass-a) tek başına yetmez çünkü NEVVA
+         entegrasyon kullanıcısı her zaman sistem yöneticisi olmayabilir.
 
     Etki: write / create / unlink üzerinde guard. Order satır-dışı alanlar
     (state, fiscal_position vb.) etkilenmez."""
     _inherit = "sale.order.line"
+
+    def _nevva_should_skip(self):
+        """True → guard atlanır. NEVVA backend `with_context(nevva_sync=True)`
+        ile çağırır; ya da kullanıcı base.group_system grubundaysa (acil
+        düzeltme yetkisi)."""
+        if self.env.context.get("nevva_sync"):
+            return True
+        return self.env.user.has_group("base.group_system")
 
     def _nevva_locked_msg(self):
         return ("Bu satır NEVVA tasarımına bağlı bir teklife ait — doğrudan "
@@ -197,7 +209,7 @@ class SaleOrderLine(models.Model):
                 "değiştirebilir.)")
 
     def write(self, vals):
-        if not self.env.user.has_group("base.group_system"):
+        if not self._nevva_should_skip():
             for line in self:
                 if line.order_id and line.order_id.nevva_project_id:
                     raise UserError(self._nevva_locked_msg())
@@ -205,7 +217,7 @@ class SaleOrderLine(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        if not self.env.user.has_group("base.group_system"):
+        if not self._nevva_should_skip():
             order_ids = {v.get("order_id") for v in vals_list if v.get("order_id")}
             if order_ids:
                 nevva_orders = self.env["sale.order"].browse(list(order_ids)).filtered(
@@ -216,7 +228,7 @@ class SaleOrderLine(models.Model):
         return super().create(vals_list)
 
     def unlink(self):
-        if not self.env.user.has_group("base.group_system"):
+        if not self._nevva_should_skip():
             for line in self:
                 if line.order_id and line.order_id.nevva_project_id:
                     raise UserError(self._nevva_locked_msg())
