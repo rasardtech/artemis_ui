@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- res.partner form: Satış sekmesine "B2B Planner erişimi" checkbox'ı ekler.
+         İşaretli ise kontak kendi Odoo parolasıyla NEVVA B2B planner'a girebilir. -->
+    <record id="res_partner_view_form_nevva_b2b" model="ir.ui.view">
+        <field name="name">res.partner.form.nevva.b2b</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='sales_purchases']//group[@name='sale']" position="inside">
+                <field name="x_nevva_b2b"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Liste görünümünde filtreleme için search view: "B2B Planner" hızlı filtresi. -->
+    <record id="res_partner_view_search_nevva_b2b" model="ir.ui.view">
+        <field name="name">res.partner.search.nevva.b2b</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='type_company']" position="after">
+                <separator/>
+                <filter name="nevva_b2b" string="B2B Planner erişimi"
+                        domain="[('x_nevva_b2b', '=', True)]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

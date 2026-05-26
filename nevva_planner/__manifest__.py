@@ -1,6 +1,6 @@
 {
     "name": "NEVVA Planner Integration",
-    "version": "17.0.1.2.4",
+    "version": "17.0.1.3.1",
     "summary": "CRM lead'den NEVVA 3D mutfak planner'ını açar + tasarım sekmesi",
     "description": """
 NEVVA Planner Integration (Full)
@@ -16,9 +16,8 @@ Teklifte (sale.order) "NEVVA Tasarım" sekmesi:
   - Planner / AR / AI render butonları
   - Proje JSON verisi (yeniden yüklenebilir)
 
-NOT: Bu sürüm Python içerir → Odoo.sh'de yalnızca Git ile kurulur. Web-upload
-(Apps → Import Module) ile kurmak için Python'suz "lite" sürümü (nevva_link)
-kullanın; o sürüm aynı verileri sipariş ekleri + not olarak gösterir.
+NOT: Bu sürüm Python içerir → Odoo.sh'de Git push (addons) veya
+Apps → Import Module ile kurulur.
 
 Kurulum:
   1. Bu modülü Apps'ten yükleyin.
@@ -31,6 +30,7 @@ Kurulum:
     "depends": ["crm", "sale", "sale_crm"],
     "data": [
         "views/res_config_settings_views.xml",
+        "views/res_partner_views.xml",
         "views/crm_lead_views.xml",
         "views/sale_order_views.xml",
     ],

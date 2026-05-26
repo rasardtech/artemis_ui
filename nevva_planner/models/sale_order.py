@@ -83,13 +83,14 @@ class SaleOrder(models.Model):
         project_id = self.nevva_project_id or self.client_order_ref or ""
         if project_id:
             from .crm_lead import _nevva_origin
-            base = _nevva_origin(
-                self.env["ir.config_parameter"].sudo().get_param(
-                    "nevva_planner.url"))
-            if base:
+            icp = self.env["ir.config_parameter"].sudo()
+            base = _nevva_origin(icp.get_param("nevva_planner.url"))
+            secret = icp.get_param("nevva_planner.inbound_secret") or ""
+            if base and secret:
                 return {
                     "type": "ir.actions.act_url",
-                    "url": "%s/api/odoo/reopen?project_id=%s" % (base, project_id),
+                    "url": "%s/api/odoo/reopen?project_id=%s&secret=%s" % (
+                        base, project_id, secret),
                     "target": "new",
                 }
         # Geriye dönük: proje id yoksa kaydedilmiş URL'i dene.
