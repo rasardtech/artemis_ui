@@ -141,17 +141,35 @@ class SaleOrder(models.Model):
         if not base or not secret:
             return
 
+        order_id = self.id
+        from ._constants import (
+            NEVVA_SALE_STATE_PATH, NEVVA_TIMEOUT_NOTIFY, NEVVA_TLS_VERIFY,
+        )
+
         def _do():
             import requests  # lazy
             try:
-                requests.post(
-                    "%s/api/odoo/sale-state" % base,
+                resp = requests.post(
+                    "%s%s" % (base, NEVVA_SALE_STATE_PATH),
                     json={"project_id": project_id, "state": state},
                     headers={"X-Odoo-Source": secret},
-                    timeout=10,
+                    timeout=NEVVA_TIMEOUT_NOTIFY,
+                    verify=NEVVA_TLS_VERIFY,
+                )
+                resp.raise_for_status()
+                # Audit 8.4: başarı log'u (debug için minimal context)
+                _logger.info(
+                    "NEVVA sale-state bildirildi: order=%s, project=%s, state=%s",
+                    order_id, project_id, state,
                 )
             except Exception:
-                _logger.warning("NEVVA sale-state bildirimi başarısız", exc_info=True)
+                # Audit 2.1: context'li warning — manuel takip / cron retry için.
+                # Sessizce yutmak yerine order_id + project_id + state log'lanır.
+                _logger.warning(
+                    "NEVVA sale-state bildirimi başarısız: order=%s, project=%s, "
+                    "state=%s — NEVVA'da durum güncel olmayabilir, manuel kontrol",
+                    order_id, project_id, state, exc_info=True,
+                )
 
         # Odoo 16+ — transaction commit edilince çalışır (write'ı bloklamaz/rollback'lemez)
         self.env.cr.postcommit.add(_do)

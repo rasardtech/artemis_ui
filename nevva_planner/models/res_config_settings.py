@@ -25,12 +25,19 @@ class ResConfigSettings(models.TransientModel):
         """NEVVA /health uç noktasına ping atar; sonucu bildirimle gösterir."""
         import requests  # lazy — registry yüklenirken üst-seviye import riski olmasın
         from .crm_lead import _nevva_origin
+        from ._constants import (
+            NEVVA_HEALTH_PATH, NEVVA_TIMEOUT_NOTIFY, NEVVA_TLS_VERIFY,
+        )
         self.ensure_one()
         base = _nevva_origin(self.nevva_url)
         if not base:
             raise UserError("Önce NEVVA URL girin ve kaydedin.")
         try:
-            resp = requests.get("%s/health" % base, timeout=10)
+            resp = requests.get(
+                "%s%s" % (base, NEVVA_HEALTH_PATH),
+                timeout=NEVVA_TIMEOUT_NOTIFY,
+                verify=NEVVA_TLS_VERIFY,
+            )
             resp.raise_for_status()
             data = resp.json()
         except Exception as e:

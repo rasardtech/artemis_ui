@@ -18,25 +18,29 @@
                 </div>
             </xpath>
 
-            <!-- Header butonları: tasarım/AR/render hızlı erişim -->
+            <!-- Header butonları: tasarım/AR/render hızlı erişim
+                 Audit 6.1: fa-external-link → dış sekme açan eylemler için Odoo konvansiyonu -->
             <xpath expr="//header" position="inside">
                 <button name="action_open_nevva_planner_so"
                         type="object"
                         string="NEVVA Planner'da Aç"
                         class="btn-secondary"
-                        icon="fa-cube"
+                        icon="fa-external-link"
+                        help="Bu teklifin 3D tasarımını NEVVA planner'da yeni sekmede aç (HMAC-signed link)."
                         invisible="not nevva_project_id and not nevva_planner_url"/>
                 <button name="action_open_nevva_ar"
                         type="object"
                         string="AR'da Gör"
                         class="btn-secondary"
                         icon="fa-vr-cardboard"
+                        help="WebXR / AR görüntüleyicide tasarımı görüntüle (mobil cihaz önerilir)."
                         invisible="not nevva_ar_url"/>
                 <button name="action_open_nevva_render"
                         type="object"
                         string="AI Render"
                         class="btn-secondary"
                         icon="fa-image"
+                        help="fal.ai ile üretilmiş foto-gerçekçi render görselini aç."
                         invisible="not nevva_render_url"/>
             </xpath>
 

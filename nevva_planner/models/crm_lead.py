@@ -84,17 +84,21 @@ class CrmLead(models.Model):
             "seller_email":   seller_email,
         }
 
+        from ._constants import (
+            NEVVA_PROJECT_START_PATH, NEVVA_TIMEOUT_BLOCKING, NEVVA_TLS_VERIFY,
+        )
         try:
             resp = requests.post(
-                "%s/api/projects/odoo-start" % base,
+                "%s%s" % (base, NEVVA_PROJECT_START_PATH),
                 json=payload,
                 headers={"X-Odoo-Source": secret},
-                timeout=20,
+                timeout=NEVVA_TIMEOUT_BLOCKING,
+                verify=NEVVA_TLS_VERIFY,
             )
             resp.raise_for_status()
             data = resp.json()
         except Exception as e:
-            _logger.exception("NEVVA Planner başlatma hatası")
+            _logger.exception("NEVVA Planner başlatma hatası (lead=%s)", self.id)
             raise UserError("NEVVA Planner başlatılamadı: %s" % e)
 
         redirect = (data or {}).get("redirect_url") or ""
@@ -114,6 +118,11 @@ class CrmLead(models.Model):
                 "NEVVA başka bir host'a redirect döndürdü: %s" % target.netloc)
 
         self.nevva_planner_url = url
+        # Audit 8.4: başarı log'u — debug için minimal context (secret yok)
+        _logger.info(
+            "NEVVA planner açıldı: lead=%s, project_id=%s",
+            self.id, (data or {}).get("project_id", "?"),
+        )
         return {
             "type": "ir.actions.act_url",
             "url": url,

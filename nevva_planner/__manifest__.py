@@ -1,6 +1,6 @@
 {
     "name": "NEVVA Planner Integration",
-    "version": "17.0.1.4.1",
+    "version": "17.0.1.4.2",
     "summary": "CRM lead'den NEVVA 3D mutfak planner'ını açar + tasarım sekmesi",
     "description": """
 NEVVA Planner Integration (Full)

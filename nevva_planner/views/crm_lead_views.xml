@@ -6,16 +6,19 @@
         <field name="inherit_id" ref="crm.crm_lead_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//header" position="inside">
+                <!-- Audit 6.1: fa-external-link Odoo konvansiyonu (dış sekme açan eylem) -->
                 <button name="action_open_nevva_planner"
                         type="object"
                         string="NEVVA Planner"
                         class="btn-primary"
-                        icon="fa-cube"/>
+                        icon="fa-external-link"
+                        help="Bu lead için NEVVA 3D mutfak planner'ını yeni sekmede aç. Müşteri bilgisi önceden doldurulur."/>
             </xpath>
             <!-- Bağlı NEVVA proje linki — oluşturulduktan sonra görünür/tıklanır. -->
             <xpath expr="//field[@name='email_from']" position="after">
                 <field name="nevva_planner_url" widget="url"
-                       readonly="1" invisible="not nevva_planner_url"/>
+                       readonly="1" invisible="not nevva_planner_url"
+                       help="Bu lead için son açılan NEVVA planner linki. Müşteriyle paylaşılabilir veya tasarımı tekrar açmak için kullanılabilir."/>
             </xpath>
         </field>
     </record>
