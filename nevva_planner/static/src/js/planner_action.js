@@ -134,6 +134,29 @@ class NevvaPlannerAction extends Component {
             this.state.loading = false;
         } else if (data.type === "nevva:close_request") {
             this._close();
+        } else if (data.type === "nevva:open_parent") {
+            // Planner içindeki "Ouvrir dans Odoo" link tıklaması.
+            // Yeni sekme açmak yerine bu action'ı kapatıp belirtilen record'a
+            // in-place navigate et — satıcı Odoo'dan çıkmadan kayda gider.
+            await this._navigateToRecord(data.model, data.id);
+        }
+    }
+
+    async _navigateToRecord(model, id) {
+        if (!model || !id) return;
+        try {
+            await this.actionService.doAction({ type: "ir.actions.act_window_close" });
+        } catch (_) { /* zaten kapalı */ }
+        try {
+            await this.actionService.doAction({
+                type: "ir.actions.act_window",
+                res_model: model,
+                res_id: Number(id),
+                views: [[false, "form"]],
+                target: "current",
+            });
+        } catch (e) {
+            console.warn("NEVVA: parent record navigation atlandı", e);
         }
     }
 
