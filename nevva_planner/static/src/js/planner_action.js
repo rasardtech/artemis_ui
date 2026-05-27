@@ -135,7 +135,7 @@ class NevvaPlannerAction extends Component {
         } else if (data.type === "nevva:close_request") {
             this._close();
         } else if (data.type === "nevva:open_parent") {
-            // Planner içindeki "Ouvrir dans Odoo" link tıklaması.
+            // Planner içindeki "Odoo'ya dön" link tıklaması.
             // Yeni sekme açmak yerine bu action'ı kapatıp belirtilen record'a
             // in-place navigate et — satıcı Odoo'dan çıkmadan kayda gider.
             await this._navigateToRecord(data.model, data.id);
