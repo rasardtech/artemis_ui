@@ -58,6 +58,12 @@ class SaleOrder(models.Model):
         help="Müşteri/temsilci tasarımı NEVVA Planner'da değiştirdi ama henüz "
              "Odoo'ya göndermedi. Bu tekliftekiler güncel olmayabilir.",
     )
+    nevva_installation_breakdown = fields.Text(
+        string="Montaj Puanı Kırılımı", readonly=True, copy=False,
+        help="Bu teklifin montaj puanı hangi modül/panel/extra'lardan toplandı? "
+             "NEVVA gönderiminde otomatik üretilir; satıcı bu kırılıma bakıp "
+             "müşteriye fiyat itirazlarında savunma yapar.",
+    )
 
     @api.depends("nevva_project_json", "nevva_project_id")
     def _compute_nevva_project_json_file(self):

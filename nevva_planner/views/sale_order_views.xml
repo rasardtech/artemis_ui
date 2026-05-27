@@ -84,6 +84,12 @@
                         <field name="nevva_project_json_file"
                                filename="nevva_project_json_filename" readonly="1"/>
                     </group>
+                    <group string="Montaj Puanı Kırılımı"
+                           invisible="not nevva_installation_breakdown">
+                        <field name="nevva_installation_breakdown"
+                               readonly="1" nolabel="1"
+                               class="o_nevva_breakdown"/>
+                    </group>
                 </page>
             </xpath>
         </field>

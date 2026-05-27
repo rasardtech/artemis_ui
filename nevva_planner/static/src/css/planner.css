@@ -1,0 +1,17 @@
+/* NEVVA Planner — Odoo backend custom styles. */
+
+/* Montaj puanı kırılımı: text alanı monospace + pre-wrap, hizalama korunur. */
+.o_nevva_breakdown textarea,
+.o_nevva_breakdown .o_field_text textarea {
+    font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', 'Courier New', monospace !important;
+    white-space: pre !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+    background: #f8f9fa !important;
+    border: 1px solid #e9ecef !important;
+    padding: 10px !important;
+    border-radius: 4px !important;
+    color: #1f2937 !important;
+    min-height: 200px !important;
+    overflow: auto !important;
+}

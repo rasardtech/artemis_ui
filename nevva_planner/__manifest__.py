@@ -1,6 +1,6 @@
 {
     "name": "NEVVA Planner Integration",
-    "version": "17.0.1.6.2",
+    "version": "17.0.1.7.1",
     "summary": "CRM lead'den NEVVA 3D mutfak planner'ını açar + tasarım sekmesi",
     "description": """
 NEVVA Planner Integration (Full)
@@ -43,6 +43,7 @@ Kurulum:
         "web.assets_backend": [
             "nevva_planner/static/src/js/planner_action.js",
             "nevva_planner/static/src/xml/planner_action.xml",
+            "nevva_planner/static/src/css/planner.css",
         ],
     },
     "application": False,
