@@ -12,14 +12,17 @@
                         string="NEVVA Planner"
                         class="btn-primary"
                         icon="fa-external-link"
-                        help="Bu lead için NEVVA 3D mutfak planner'ını yeni sekmede aç. Müşteri bilgisi önceden doldurulur."/>
+                        help="Bu lead için NEVVA 3D mutfak planner'ını Odoo içinde aç. Müşteri bilgisi önceden doldurulur."/>
             </xpath>
-            <!-- Bağlı NEVVA proje linki — oluşturulduktan sonra görünür/tıklanır. -->
-            <xpath expr="//field[@name='email_from']" position="after">
-                <field name="nevva_planner_url" widget="url"
-                       readonly="1" invisible="not nevva_planner_url"
-                       help="Bu lead için son açılan NEVVA planner linki. Müşteriyle paylaşılabilir veya tasarımı tekrar açmak için kullanılabilir."/>
-            </xpath>
+            <!-- NOT: nevva_planner_url field'ı UI'da gösterilmez (1.7.4'ten itibaren).
+                 Sebepler:
+                   1) Token'lı URL (?t=TOKEN) CRM kullanıcısına FULL EDIT yetkisi
+                      verir → security risk
+                   2) Uzun URL "Date de clôture / Étiquettes" alanlarının üstüne
+                      taşıp form layout'unu bozuyordu
+                   3) Header'daki "NEVVA Planner" butonu zaten aynı işi yapıyor
+                      (HMAC-signed URL, in-Odoo iframe ile) → field redundant
+                 Field DB'de saklı kalır (geriye uyumluluk, audit trail). -->
         </field>
     </record>
 </odoo>
