@@ -44,6 +44,20 @@
                         invisible="not nevva_render_url"/>
             </xpath>
 
+            <!-- Sheet button_box'a smart button: NEVVA Geçmişi (snapshot sayısı badge)
+                 Audit: target='new' modal popup, kanban + form view kullanıcıya
+                 her güncellemenin render thumbnail + tarih + toplamını gösterir. -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_open_nevva_snapshots"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-history"
+                        invisible="nevva_snapshot_count == 0">
+                    <field name="nevva_snapshot_count" widget="statinfo"
+                           string="NEVVA Geçmişi"/>
+                </button>
+            </xpath>
+
             <!-- Sipariş satırları sekmesinden sonra "NEVVA Tasarım" sekmesi -->
             <xpath expr="//notebook/page[1]" position="after">
                 <page string="NEVVA Tasarım" name="nevva_design"

@@ -65,6 +65,40 @@ class SaleOrder(models.Model):
              "müşteriye fiyat itirazlarında savunma yapar.",
     )
 
+    # ── NEVVA Snapshot Geçmişi (v1.8.0+) ──────────────────────────────────────
+    # Her Envoyer öncesi NEVVA backend mevcut state'i nevva.sale.snapshot
+    # kaydı olarak arşivler. Form view'da smart button "NEVVA Geçmişi (N)"
+    # ile kanban popup açılır (target='new' modal).
+    nevva_snapshot_ids = fields.One2many(
+        "nevva.sale.snapshot", "sale_order_id", string="NEVVA Geçmiş Snapshot'lar",
+        readonly=True, copy=False,
+    )
+    nevva_snapshot_count = fields.Integer(
+        compute="_compute_nevva_snapshot_count",
+        string="Snapshot Sayısı",
+    )
+
+    @api.depends("nevva_snapshot_ids")
+    def _compute_nevva_snapshot_count(self):
+        for rec in self:
+            rec.nevva_snapshot_count = len(rec.nevva_snapshot_ids)
+
+    def action_open_nevva_snapshots(self):
+        """Smart button: NEVVA Geçmişi kanban'ını modal popup'ta aç."""
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": "NEVVA Geçmişi — %s" % (self.name or ""),
+            "res_model": "nevva.sale.snapshot",
+            "view_mode": "kanban,tree,form",
+            "domain": [("sale_order_id", "=", self.id)],
+            "context": {
+                "default_sale_order_id": self.id,
+                "search_default_sale_order_id": self.id,
+            },
+            "target": "new",  # modal popup
+        }
+
     @api.depends("nevva_project_json", "nevva_project_id")
     def _compute_nevva_project_json_file(self):
         for order in self:

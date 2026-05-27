@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_nevva_sale_snapshot_user,nevva.sale.snapshot.user,model_nevva_sale_snapshot,sales_team.group_sale_salesman,1,0,0,0
+access_nevva_sale_snapshot_manager,nevva.sale.snapshot.manager,model_nevva_sale_snapshot,sales_team.group_sale_manager,1,1,0,1
