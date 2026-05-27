@@ -9,11 +9,21 @@ _logger = logging.getLogger(__name__)
 def _nevva_origin(url):
     """NEVVA base URL'sini kök origin'e indir (scheme://host). API her zaman
     kökte (/api/...); param yanlışlıkla /planner gibi bir path içerirse
-    /planner/api/... SPA'ya düşer ve login açar — bunu önler."""
+    /planner/api/... SPA'ya düşer ve login açar — bunu önler.
+
+    Güvenlik: http:// http://localhost gibi local-only domain'ler hariç her
+    yerde HTTPS'e zorlanır. NEVVA prod/staging zaten cert'li → http yanlışlık
+    olur, iframe Mixed Content blocked → satıcıya boş ekran. Sessizce düzelt.
+    """
     base = (url or "").strip().rstrip("/")
     if "://" in base:
         scheme, rest = base.split("://", 1)
-        base = scheme + "://" + rest.split("/", 1)[0]
+        host = rest.split("/", 1)[0]
+        # http → https zorla (local/dev domain'ler hariç). production iframe'i
+        # bloklamasın diye yanlış protokol kullanımını sessizce düzelt.
+        if scheme.lower() == "http" and not host.startswith(("localhost", "127.0.0.1", "0.0.0.0")):
+            scheme = "https"
+        base = scheme + "://" + host
     return base
 
 
