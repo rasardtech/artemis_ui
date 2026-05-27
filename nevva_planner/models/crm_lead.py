@@ -40,8 +40,18 @@ class CrmLead(models.Model):
         URL hash'ten action_open_nevva_planner çağrısı yapılınca Odoo,
         in-memory action dict'i URL bazlı tag'la yeniden çözüyor → params
         kayboluyordu. Bu method JS'in RPC ile params'ı yeniden çekmesini sağlar.
-        Refresh/share/back-forward sonrası da çalışır."""
+        Refresh/share/back-forward sonrası da çalışır.
+
+        Audit #11: bu RPC herhangi bir Odoo internal user tarafından
+        herhangi bir lead ID için çağrılabilirdi → URL probing riski.
+        Erişim kontrol: caller'ın CRM lead'e read access'i olmalı (record
+        rules zaten uygular); ek olarak yalnız B2B planner kullanıcılarına
+        izin ver — partner'ın x_nevva_b2b işareti yoksa reject.
+        """
         self.ensure_one()
+        # check_access_rights/rule — read yetkisi yoksa AccessError fırlat
+        self.check_access_rights("read")
+        self.check_access_rule("read")
         action = self.action_open_nevva_planner()
         # action_open_nevva_planner zaten ir.actions.client dönüyor; sadece
         # params alt-dict'ini extract et — JS bunu doğrudan kullansın.

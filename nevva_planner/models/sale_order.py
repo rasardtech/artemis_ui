@@ -79,8 +79,15 @@ class SaleOrder(models.Model):
                 order.nevva_project_json_filename = False
 
     def nevva_get_planner_payload(self):
-        """JS client action stateless fetch — bkz crm_lead.nevva_get_planner_payload."""
+        """JS client action stateless fetch — bkz crm_lead.nevva_get_planner_payload.
+
+        Audit #11: erişim kontrolü — caller'ın bu sale.order'a read access'i
+        olmalı (record rules zaten uygular ama explicit kontrol probing riskini
+        kapatır).
+        """
         self.ensure_one()
+        self.check_access_rights("read")
+        self.check_access_rule("read")
         action = self.action_open_nevva_planner_so()
         return action.get("params", {}) if isinstance(action, dict) else {}
 
@@ -107,14 +114,24 @@ class SaleOrder(models.Model):
             secret = (icp.get_param("nevva_planner.inbound_secret") or "").strip()
             if base and secret:
                 ts = int(_time.time())
+                # Audit #6: butona basan asıl Odoo kullanıcısının email'i
+                # HMAC payload'a + URL'ye eklenir. /reopen NEVVA'da bu email
+                # için sessiz JWT üretir → satıcı doğru kimlikle login olur
+                # (önceden project.staff_email'e fallback yaptığı için
+                # başka satıcı reopen ettiğinde yanlış kullanıcı görünüyordu).
+                # Email format kontrolü — login (admin gibi) kabul edilmez.
+                import re as _re
+                seller_email = (self.env.user.email or "").strip()
+                if not _re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", seller_email):
+                    seller_email = ""
+                sig_payload = "%s:%d:%s" % (project_id, ts, seller_email)
                 sig = _hmac.new(
-                    secret.encode(),
-                    ("%s:%d" % (project_id, ts)).encode(),
-                    hashlib.sha256,
+                    secret.encode(), sig_payload.encode(), hashlib.sha256,
                 ).hexdigest()[:32]
-                query = urlencode({
-                    "project_id": project_id, "ts": ts, "sig": sig,
-                })
+                _q = {"project_id": project_id, "ts": ts, "sig": sig}
+                if seller_email:
+                    _q["seller"] = seller_email
+                query = urlencode(_q)
                 url = "%s/api/odoo/reopen?%s" % (base, query)
                 # Client action ile Odoo içinde aç (yeni sekme yerine).
                 # Shotgun: params + context her ikisine yaz, JS hangisini
