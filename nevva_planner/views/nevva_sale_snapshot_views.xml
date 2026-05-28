@@ -83,6 +83,17 @@
         <field name="model">nevva.sale.snapshot</field>
         <field name="arch" type="xml">
             <form create="false" edit="false" duplicate="false">
+                <header>
+                    <button name="action_download_render" type="object"
+                            string="🖼 Render İndir" class="btn-secondary"
+                            invisible="not render_attachment_id"/>
+                    <button name="action_download_pdf" type="object"
+                            string="📄 BOM PDF İndir" class="btn-secondary"
+                            invisible="not pdf_attachment_id"/>
+                    <button name="action_download_json" type="object"
+                            string="💾 Proje JSON İndir" class="btn-secondary"
+                            invisible="not json_attachment_id"/>
+                </header>
                 <sheet>
                     <div class="oe_title">
                         <h1>

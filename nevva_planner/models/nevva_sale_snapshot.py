@@ -12,6 +12,7 @@ NEVVA backend create yolu: XMLRPC ile `nevva.sale.snapshot.create(...)`.
 Storage cap: env NEVVA_SO_SNAPSHOT_CAP (default 10) per sale.order.
 """
 from odoo import fields, models
+from odoo.exceptions import UserError
 
 
 class NevvaSaleSnapshot(models.Model):
@@ -95,6 +96,26 @@ class NevvaSaleSnapshot(models.Model):
                 "/web/image/%d" % rec.render_attachment_id.id
                 if rec.render_attachment_id else False
             )
+
+    # ── İndirme aksiyonları (form popup butonları) ──────────────────────────
+    def _download_attachment(self, attachment, label):
+        self.ensure_one()
+        if not attachment:
+            raise UserError("Bu sürümde %s yok." % label)
+        return {
+            "type": "ir.actions.act_url",
+            "url": "/web/content/%d?download=true" % attachment.id,
+            "target": "new",
+        }
+
+    def action_download_pdf(self):
+        return self._download_attachment(self.pdf_attachment_id, "BOM PDF")
+
+    def action_download_json(self):
+        return self._download_attachment(self.json_attachment_id, "proje JSON")
+
+    def action_download_render(self):
+        return self._download_attachment(self.render_attachment_id, "render görseli")
 
     def _compute_render_html(self):
         for rec in self:

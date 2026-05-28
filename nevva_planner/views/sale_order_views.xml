@@ -105,6 +105,26 @@
                                class="o_nevva_breakdown"/>
                     </group>
                 </page>
+
+                <!-- "NEVVA Tasarım" yanında "NEVVA Geçmişi" sekmesi — üst üste
+                     güncellemelerde (her Envoyer öncesi) arşivlenen sürümler.
+                     Satıra tıkla → form popup: büyük render + eski satırlar + tutar.
+                     (Smart button da kalır; bu sekme aynı veriyi inline gösterir.) -->
+                <page string="NEVVA Geçmişi" name="nevva_history"
+                      invisible="nevva_snapshot_count == 0">
+                    <field name="nevva_snapshot_ids" nolabel="1" readonly="1">
+                        <tree default_order="created_at desc"
+                              create="false" delete="false" edit="false">
+                            <field name="created_at" string="Tarih"/>
+                            <field name="sender_email" string="Gönderen"/>
+                            <field name="language" string="Dil" optional="hide"/>
+                            <field name="line_count" string="Satır"/>
+                            <field name="amount_untaxed" string="HT (€)"/>
+                            <field name="amount_total" string="TTC (€)"/>
+                            <field name="currency_name" string="Para" optional="hide"/>
+                        </tree>
+                    </field>
+                </page>
             </xpath>
         </field>
     </record>
