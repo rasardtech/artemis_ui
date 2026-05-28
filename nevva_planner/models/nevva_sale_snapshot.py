@@ -117,6 +117,16 @@ class NevvaSaleSnapshot(models.Model):
     def action_download_render(self):
         return self._download_attachment(self.render_attachment_id, "render görseli")
 
+    def action_open_planner_for_restore(self):
+        """Güvenli "geri dön": teklifin NEVVA planner'ını aç. Satıcı planner'daki
+        Sürüm Geçmişi'nden (her Envoyer otomatik snapshot'lanır) eski sürüme
+        tam-sadakatle + undo'lu restore eder, sonra tekrar Envoyer'lar. Odoo
+        siparişini doğrudan EZMEZ (ürünler planner'da doğru çözülür → güvenli)."""
+        self.ensure_one()
+        if not self.sale_order_id:
+            raise UserError("Bu snapshot bir siparişe bağlı değil.")
+        return self.sale_order_id.action_open_nevva_planner_so()
+
     def _compute_render_html(self):
         for rec in self:
             if rec.render_attachment_id:

@@ -84,6 +84,9 @@
         <field name="arch" type="xml">
             <form create="false" edit="false" duplicate="false">
                 <header>
+                    <button name="action_open_planner_for_restore" type="object"
+                            string="↩ Planner'da Geri Dön" class="btn-primary"
+                            help="Teklifin planner'ını açar; Sürüm Geçmişi'nden bu/başka sürüme güvenle dönüp tekrar gönderebilirsin (sipariş doğrudan ezilmez)."/>
                     <button name="action_download_render" type="object"
                             string="🖼 Render İndir" class="btn-secondary"
                             invisible="not render_attachment_id"/>
