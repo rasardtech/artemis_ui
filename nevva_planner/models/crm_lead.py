@@ -52,6 +52,10 @@ class CrmLead(models.Model):
         # check_access_rights/rule — read yetkisi yoksa AccessError fırlat
         self.check_access_rights("read")
         self.check_access_rule("read")
+        # Audit: bu RPC NEVVA'ya canlı POST atıp proje açıyor (yan etki). Yalnız
+        # satış ekibi tetikleyebilsin — keyfi internal user probing/DoS yapamasın.
+        if not self.env.user.has_group("sales_team.group_sale_salesman"):
+            raise UserError("NEVVA Planner yalnız satış ekibi tarafından açılabilir.")
         action = self.action_open_nevva_planner()
         # action_open_nevva_planner zaten ir.actions.client dönüyor; sadece
         # params alt-dict'ini extract et — JS bunu doğrudan kullansın.

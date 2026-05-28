@@ -88,12 +88,13 @@ class NevvaSaleSnapshot(models.Model):
 
     def _compute_thumbnail_url(self):
         # Kanban kartında <img t-att-src="record.render_thumbnail_url.raw_value"/>
-        # ile gösterilir. ir.attachment varsa /web/image/{id}, yoksa placeholder.
+        # ile gösterilir (t-if attachment var diye gate'li). Attachment yoksa False —
+        # eski placeholder.svg dosyası mevcut değildi (404 önlenir).
         for rec in self:
-            if rec.render_attachment_id:
-                rec.render_thumbnail_url = "/web/image/%d" % rec.render_attachment_id.id
-            else:
-                rec.render_thumbnail_url = "/nevva_planner/static/src/img/placeholder.svg"
+            rec.render_thumbnail_url = (
+                "/web/image/%d" % rec.render_attachment_id.id
+                if rec.render_attachment_id else False
+            )
 
     def _compute_render_html(self):
         for rec in self:

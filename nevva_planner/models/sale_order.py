@@ -122,6 +122,9 @@ class SaleOrder(models.Model):
         self.ensure_one()
         self.check_access_rights("read")
         self.check_access_rule("read")
+        # Audit: yalnız satış ekibi tetikleyebilsin (keyfi internal user probing'i kapat).
+        if not self.env.user.has_group("sales_team.group_sale_salesman"):
+            raise UserError("NEVVA Planner yalnız satış ekibi tarafından açılabilir.")
         action = self.action_open_nevva_planner_so()
         return action.get("params", {}) if isinstance(action, dict) else {}
 
