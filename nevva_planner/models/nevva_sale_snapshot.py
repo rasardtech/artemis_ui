@@ -11,7 +11,7 @@ snapshot'lar sipariş satırı kartı gibi listelenir (tarih + render thumbnail
 NEVVA backend create yolu: XMLRPC ile `nevva.sale.snapshot.create(...)`.
 Storage cap: env NEVVA_SO_SNAPSHOT_CAP (default 10) per sale.order.
 """
-from odoo import fields, models
+from odoo import fields, models, _
 from odoo.exceptions import UserError
 
 
@@ -101,7 +101,7 @@ class NevvaSaleSnapshot(models.Model):
     def _download_attachment(self, attachment, label):
         self.ensure_one()
         if not attachment:
-            raise UserError("Bu sürümde %s yok." % label)
+            raise UserError(_("Bu sürümde %s yok.") % label)
         return {
             "type": "ir.actions.act_url",
             "url": "/web/content/%d?download=true" % attachment.id,
@@ -124,7 +124,7 @@ class NevvaSaleSnapshot(models.Model):
         siparişini doğrudan EZMEZ (ürünler planner'da doğru çözülür → güvenli)."""
         self.ensure_one()
         if not self.sale_order_id:
-            raise UserError("Bu snapshot bir siparişe bağlı değil.")
+            raise UserError(_("Bu snapshot bir siparişe bağlı değil."))
         return self.sale_order_id.action_open_nevva_planner_so()
 
     def _compute_render_html(self):

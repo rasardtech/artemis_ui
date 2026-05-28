@@ -10,11 +10,8 @@
             <xpath expr="//header" position="after">
                 <div class="alert alert-warning text-center mb-0" role="alert"
                      invisible="not nevva_pending">
-                    <i class="fa fa-exclamation-triangle me-1"/>
-                    Bu tasarım NEVVA Planner'da değiştirildi ancak değişiklikler
-                    henüz gönderilmedi — bu teklifteki satırlar/görseller güncel
-                    olmayabilir. Güncel tasarımı görmek için
-                    <b>"NEVVA Planner'da Aç"</b> butonunu kullanın.
+                    <i class="fa fa-exclamation-triangle me-1" title="Uyarı" role="img" aria-label="Uyarı"/>
+                    <span>Bu tasarım NEVVA Planner'da değiştirildi ancak değişiklikler henüz gönderilmedi — bu teklifteki satırlar/görseller güncel olmayabilir. Güncel tasarımı görmek için "NEVVA Planner'da Aç" butonunu kullanın.</span>
                 </div>
             </xpath>
 

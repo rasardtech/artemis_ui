@@ -1,7 +1,7 @@
 import base64
 import logging
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
@@ -124,7 +124,7 @@ class SaleOrder(models.Model):
         self.check_access_rule("read")
         # Audit: yalnız satış ekibi tetikleyebilsin (keyfi internal user probing'i kapat).
         if not self.env.user.has_group("sales_team.group_sale_salesman"):
-            raise UserError("NEVVA Planner yalnız satış ekibi tarafından açılabilir.")
+            raise UserError(_("NEVVA Planner yalnız satış ekibi tarafından açılabilir."))
         action = self.action_open_nevva_planner_so()
         return action.get("params", {}) if isinstance(action, dict) else {}
 
@@ -207,7 +207,7 @@ class SaleOrder(models.Model):
     def _nevva_open_url(self, url, label):
         self.ensure_one()
         if not url:
-            raise UserError("Bu teklife bağlı bir %s linki yok." % label)
+            raise UserError(_("Bu teklife bağlı bir %s linki yok.") % label)
         return {"type": "ir.actions.act_url", "url": url, "target": "new"}
 
     def write(self, vals):
@@ -298,7 +298,7 @@ class SaleOrderLine(models.Model):
         return self.env.user.has_group("base.group_system")
 
     def _nevva_locked_msg(self):
-        return ("Bu satır NEVVA tasarımına bağlı bir teklife ait — doğrudan "
+        return _("Bu satır NEVVA tasarımına bağlı bir teklife ait — doğrudan "
                 "düzenlenemez. Değişiklik için NEVVA planner'da düzenleyip "
                 "'Envoyer' ile yeniden gönderin. (Sadece yönetici doğrudan "
                 "değiştirebilir.)")

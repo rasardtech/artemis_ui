@@ -1,6 +1,6 @@
 import logging
 
-from odoo import models, fields
+from odoo import models, fields, _
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
@@ -55,7 +55,7 @@ class CrmLead(models.Model):
         # Audit: bu RPC NEVVA'ya canlı POST atıp proje açıyor (yan etki). Yalnız
         # satış ekibi tetikleyebilsin — keyfi internal user probing/DoS yapamasın.
         if not self.env.user.has_group("sales_team.group_sale_salesman"):
-            raise UserError("NEVVA Planner yalnız satış ekibi tarafından açılabilir.")
+            raise UserError(_("NEVVA Planner yalnız satış ekibi tarafından açılabilir."))
         action = self.action_open_nevva_planner()
         # action_open_nevva_planner zaten ir.actions.client dönüyor; sadece
         # params alt-dict'ini extract et — JS bunu doğrudan kullansın.
@@ -74,10 +74,10 @@ class CrmLead(models.Model):
         base = _nevva_origin(icp.get_param("nevva_planner.url"))
         secret = icp.get_param("nevva_planner.inbound_secret") or ""
         if not base or not secret:
-            raise UserError(
+            raise UserError(_(
                 "NEVVA Planner yapılandırılmadı.\n"
                 "Settings → NEVVA Planner bölümünden URL ve Inbound Secret girin."
-            )
+            ))
 
         partner = self.partner_id
         # Dil önceliği:
@@ -135,11 +135,11 @@ class CrmLead(models.Model):
             data = resp.json()
         except Exception as e:
             _logger.exception("NEVVA Planner başlatma hatası (lead=%s)", self.id)
-            raise UserError("NEVVA Planner başlatılamadı: %s" % e)
+            raise UserError(_("NEVVA Planner başlatılamadı: %s") % e)
 
         redirect = (data or {}).get("redirect_url") or ""
         if not redirect:
-            raise UserError("NEVVA geçerli bir redirect_url döndürmedi.")
+            raise UserError(_("NEVVA geçerli bir redirect_url döndürmedi."))
         url = redirect if redirect.startswith("http") else "%s%s" % (base, redirect)
         # Audit 8.3: open-redirect koruması — URL ya base ile aynı origin olmalı
         # ya da relative path (yukarıda base'e eklendi). javascript:/data:/file:
@@ -147,11 +147,9 @@ class CrmLead(models.Model):
         from urllib.parse import urlparse
         target = urlparse(url)
         if target.scheme not in ("http", "https"):
-            raise UserError(
-                "NEVVA güvensiz redirect_url döndürdü (scheme: %s)" % target.scheme)
+            raise UserError(_("NEVVA güvensiz redirect_url döndürdü (scheme: %s)") % target.scheme)
         if urlparse(base).netloc != target.netloc:
-            raise UserError(
-                "NEVVA başka bir host'a redirect döndürdü: %s" % target.netloc)
+            raise UserError(_("NEVVA başka bir host'a redirect döndürdü: %s") % target.netloc)
 
         self.nevva_planner_url = url
         # Audit 8.4: başarı log'u — debug için minimal context (secret yok)

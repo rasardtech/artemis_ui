@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, _
 from odoo.exceptions import UserError
 
 
@@ -43,7 +43,7 @@ class ResConfigSettings(models.TransientModel):
         self.ensure_one()
         base = _nevva_origin(self.nevva_url)
         if not base:
-            raise UserError("Önce NEVVA URL girin ve kaydedin.")
+            raise UserError(_("Önce NEVVA URL girin ve kaydedin."))
         try:
             resp = requests.get(
                 "%s%s" % (base, NEVVA_HEALTH_PATH),
@@ -53,14 +53,14 @@ class ResConfigSettings(models.TransientModel):
             resp.raise_for_status()
             data = resp.json()
         except Exception as e:
-            raise UserError("NEVVA'ya bağlanılamadı: %s" % e)
+            raise UserError(_("NEVVA'ya bağlanılamadı: %s") % e)
         status = (data or {}).get("status", "?")
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
-                "title": "NEVVA bağlantısı",
-                "message": "Bağlantı başarılı — durum: %s" % status,
+                "title": _("NEVVA bağlantısı"),
+                "message": _("Bağlantı başarılı — durum: %s") % status,
                 "type": "success",
                 "sticky": False,
             },
