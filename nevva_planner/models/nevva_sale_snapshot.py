@@ -70,6 +70,11 @@ class NevvaSaleSnapshot(models.Model):
     # Display ve kanban için computed alanlar
     display_name = fields.Char(compute="_compute_display_name", store=True)
     render_thumbnail_url = fields.Char(compute="_compute_thumbnail_url")
+    # Form view'da büyük render önizleme. Odoo 17 form arch'ta <img t-att-src>
+    # (owl direktifi) YASAK → render'ı Html alanı + widget="html" ile gösteririz
+    # (lines_html ile aynı desen, sanitize=False img tag'ini korur).
+    render_html = fields.Html(string="Render", compute="_compute_render_html",
+                              sanitize=False)
     line_count = fields.Integer(string="Satır Sayısı",
                                 compute="_compute_line_count")
     lines_html = fields.Html(string="Satırlar Tablosu",
@@ -89,6 +94,17 @@ class NevvaSaleSnapshot(models.Model):
                 rec.render_thumbnail_url = "/web/image/%d" % rec.render_attachment_id.id
             else:
                 rec.render_thumbnail_url = "/nevva_planner/static/src/img/placeholder.svg"
+
+    def _compute_render_html(self):
+        for rec in self:
+            if rec.render_attachment_id:
+                rec.render_html = (
+                    "<img src='/web/image/%d' "
+                    "style='max-width:600px;border:1px solid #e5e7eb;border-radius:8px' "
+                    "alt='Eski render'/>" % rec.render_attachment_id.id
+                )
+            else:
+                rec.render_html = False
 
     def _compute_line_count(self):
         import json as _json
