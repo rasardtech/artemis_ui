@@ -65,6 +65,106 @@ class SaleOrder(models.Model):
              "müşteriye fiyat itirazlarında savunma yapar.",
     )
 
+    # ── Customer Install Gallery (v17.0.2.1.0+) ──────────────────────────────
+    # Gerçek mutfak kurulum fotoğrafları → NEVVA Social Studio içerik kaynağı.
+    # Gerçek kurulumlar render'lardan 3-5x daha fazla dönüşüm sağlar.
+    nevva_install_consent = fields.Boolean(
+        string="NEVVA Sosyal Paylaşım Onayı (KVKK)", copy=False, default=False,
+        help="Müşteri kurulum fotoğraflarının NEVVA sosyal medyasında "
+             "(anonim — ad/adres olmadan) paylaşılmasına onay verdi mi? "
+             "ZORUNLU — onay yoksa fotoğraf NEVVA'ya gönderilmez.",
+    )
+    nevva_install_sent = fields.Boolean(
+        string="Kurulum Fotoğrafları Gönderildi", readonly=True, copy=False, default=False,
+    )
+
+    def action_send_install_photos(self):
+        """Bu sipariş'in görsel ek'lerini NEVVA Social Studio'ya gönder.
+
+        sale.order'a iliştirilmiş image attachment'lar (ir.attachment, mimetype
+        image/*) base64 olarak NEVVA /api/social/install-gallery endpoint'ine
+        HMAC POST. NEVVA bunları "📸 Gerçek Kurulum" badge'iyle Kreatif
+        kütüphanesine ekler → caption AI + publish pipeline normal çalışır.
+
+        KVKK: nevva_install_consent=True zorunlu.
+        """
+        self.ensure_one()
+        if not self.nevva_install_consent:
+            raise UserError(
+                "Müşteri sosyal paylaşım onayı (KVKK) işaretli değil. "
+                "Fotoğrafları göndermeden önce müşteriden onay al + "
+                "'NEVVA Sosyal Paylaşım Onayı' kutusunu işaretle.")
+
+        # sale.order'a bağlı image attachment'ları topla
+        attachments = self.env["ir.attachment"].search([
+            ("res_model", "=", "sale.order"),
+            ("res_id", "=", self.id),
+            ("mimetype", "ilike", "image/%"),
+            # NEVVA sistem ek'lerini (render/screenshot/snapshot) hariç tut —
+            # yalnız satıcının yüklediği gerçek kurulum fotoları
+            ("name", "not ilike", "nevva"),
+            ("name", "not ilike", "snapshot-"),
+        ], limit=10)
+        if not attachments:
+            raise UserError(
+                "Bu siparişe iliştirilmiş kurulum fotoğrafı yok. "
+                "Önce sohbet/ek bölümünden gerçek kurulum fotoğraflarını yükle "
+                "(isim 'nevva' içermemeli).")
+
+        icp = self.env["ir.config_parameter"].sudo()
+        from .crm_lead import _nevva_origin
+        nevva_url = _nevva_origin(icp.get_param("nevva_planner.url"))
+        secret = (icp.get_param("nevva_planner.inbound_secret") or "").strip()
+        if not nevva_url or not secret:
+            raise UserError("NEVVA URL/Secret yapılandırılmamış (Settings → NEVVA Planner).")
+
+        try:
+            import requests
+        except ImportError:
+            raise UserError("requests modülü yok — sistem yöneticisine bildir.")
+
+        photos_b64 = []
+        for att in attachments:
+            if att.datas:  # base64 string
+                photos_b64.append(att.datas.decode() if isinstance(att.datas, bytes) else att.datas)
+        if not photos_b64:
+            raise UserError("Attachment verisi okunamadı.")
+
+        payload = {
+            "photos_b64":    photos_b64,
+            "consent":       True,
+            "style_hint":    "modern",          # satıcı sonra Social Studio'da değiştirebilir
+            "region":        (self.partner_id.city or None) if self.partner_id else None,
+            "odoo_sale_order_id": self.id,
+            "customer_label": f"Kurulum #{self.name}",   # anonim — müşteri adı DEĞİL
+        }
+        try:
+            r = requests.post(
+                f"{nevva_url}/api/social/install-gallery",
+                json=payload,
+                headers={"X-Odoo-Source": secret, "Content-Type": "application/json"},
+                timeout=30,
+            )
+            if r.status_code == 200:
+                data = r.json()
+                self.nevva_install_sent = True
+                return {
+                    "type": "ir.actions.client",
+                    "tag": "display_notification",
+                    "params": {
+                        "title": "NEVVA Social Studio",
+                        "message": f"{data.get('created', 0)} kurulum fotoğrafı gönderildi. "
+                                   f"Social Studio → Kreatif → '📸 Kurulum' sekmesinde görünür.",
+                        "type": "success",
+                        "sticky": False,
+                    },
+                }
+            raise UserError(f"NEVVA reddetti: {r.status_code} — {r.text[:200]}")
+        except UserError:
+            raise
+        except Exception as e:
+            raise UserError(f"Gönderim hatası: {e}")
+
     # ── NEVVA Snapshot Geçmişi (v1.8.0+) ──────────────────────────────────────
     # Her Envoyer öncesi NEVVA backend mevcut state'i nevva.sale.snapshot
     # kaydı olarak arşivler. Form view'da smart button "NEVVA Geçmişi (N)"

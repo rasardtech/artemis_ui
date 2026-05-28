@@ -104,6 +104,25 @@
                                readonly="1" nolabel="1"
                                class="o_nevva_breakdown"/>
                     </group>
+                    <!-- Customer Install Gallery (v17.0.2.1.0+) — gerçek kurulum
+                         fotoğraflarını NEVVA Social Studio'ya gönder -->
+                    <group string="📸 Sosyal Medya — Gerçek Kurulum Fotoğrafları">
+                        <field name="nevva_install_consent"/>
+                        <field name="nevva_install_sent" readonly="1"/>
+                        <div colspan="2" class="text-muted" style="font-size:12px">
+                            Bu siparişe sohbet/ek bölümünden gerçek kurulum fotoğrafları yükle
+                            (dosya adı 'nevva' içermesin), müşteri onayını al + yukarıdaki kutuyu
+                            işaretle, sonra butona bas. Fotoğraflar NEVVA Social Studio'da
+                            "📸 Kurulum" kütüphanesine düşer — render'dan 3-5x daha çok dönüşüm.
+                        </div>
+                        <button name="action_send_install_photos"
+                                type="object"
+                                string="📸 Kurulum Fotoğraflarını NEVVA'ya Gönder"
+                                class="btn-primary"
+                                colspan="2"
+                                confirm="Müşteri onayı alındı mı? Fotoğraflar NEVVA sosyal medya kütüphanesine gönderilecek."
+                                invisible="not nevva_install_consent"/>
+                    </group>
                 </page>
             </xpath>
         </field>
