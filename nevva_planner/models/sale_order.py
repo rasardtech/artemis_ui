@@ -125,6 +125,29 @@ class SaleOrder(models.Model):
         action = self.action_open_nevva_planner_so()
         return action.get("params", {}) if isinstance(action, dict) else {}
 
+    def action_confirm(self):
+        """Sale.order onayı — bağlı CRM lead'in UTM'i 'post_*' ise NEVVA Social
+        Studio attribution webhook'a sale verisi de gönder (revenue_eur).
+
+        Faz 1 funnel: lead created webhook'tan sonra sale confirm = döngü kapanır.
+        SocialPost.engagement.attribution.{sales++, sale_ids+, revenue_eur+=amount}.
+        """
+        res = super().action_confirm()
+        for order in self:
+            try:
+                lead = order.opportunity_id
+                if not lead or not (lead.x_utm_campaign or "").startswith("post_"):
+                    continue
+                lead._nevva_notify_social_attribution(
+                    kind="sale",
+                    sale_amount_eur=float(order.amount_total or 0.0),
+                    sale_order_id=order.id,
+                )
+            except Exception as e:
+                _logger.warning("NEVVA sale attribution notify fail (order=%s): %s",
+                                order.id, e)
+        return res
+
     def action_open_nevva_planner_so(self):
         """Bu teklifin tasarımını NEVVA planner'da Odoo içinde (v1.6.0+) full-screen
         client action olarak açar.

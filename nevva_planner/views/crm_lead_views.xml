@@ -23,6 +23,23 @@
                    3) Header'daki "NEVVA Planner" butonu zaten aynı işi yapıyor
                       (HMAC-signed URL, in-Odoo iframe ile) → field redundant
                  Field DB'de saklı kalır (geriye uyumluluk, audit trail). -->
+
+            <!-- NEVVA Social Studio funnel attribution (v17.0.2.0.0+) — UTM
+                 parametreleri readonly görünür; "Internal Notes" sekmesinin
+                 içine küçük bir bilgi grubu. Website form'undan gelen değerleri
+                 satıcı görür, hangi sosyal post'tan geldiğini bilir. -->
+            <xpath expr="//page[@name='internal_notes']" position="inside">
+                <group string="NEVVA Social Studio — Trafik Kaynağı"
+                       invisible="not x_utm_campaign">
+                    <field name="x_utm_source"   readonly="1"/>
+                    <field name="x_utm_medium"   readonly="1"/>
+                    <field name="x_utm_campaign" readonly="1"
+                           help="post_&lt;id8&gt; formatında ise NEVVA SocialPost'tan geldi"/>
+                    <field name="x_utm_content"  readonly="1"/>
+                    <field name="x_nevva_attribution_sent" readonly="1"
+                           help="NEVVA webhook bildirimi yapıldı mı (idempotent)"/>
+                </group>
+            </xpath>
         </field>
     </record>
 </odoo>
