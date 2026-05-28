@@ -1,6 +1,6 @@
 import logging
 
-from odoo import api, models, fields
+from odoo import models, fields
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
@@ -34,97 +34,6 @@ class CrmLead(models.Model):
         string="NEVVA Planner URL", readonly=True, copy=False,
         help="Son açılan NEVVA planner linki (bu lead için).",
     )
-
-    # ── NEVVA Social Studio funnel attribution (v17.0.2.0.0+) ────────────────
-    # Website form'undan gelen UTM parametreleri — Odoo'ya doğru iletildikten
-    # sonra crm.lead.create() override webhook'la NEVVA'ya bildirir.
-    # NEVVA backend SocialPost.engagement.attribution.leads++ yapar.
-    x_utm_source   = fields.Char(string="UTM Source",   index=True, copy=False,
-                                  help="Hangi sosyal platform — pinterest/instagram/facebook/...")
-    x_utm_medium   = fields.Char(string="UTM Medium",   copy=False,
-                                  help="Genelde 'social' (NEVVA UTM injection default).")
-    x_utm_campaign = fields.Char(string="UTM Campaign", index=True, copy=False,
-                                  help="Format: 'post_<id8>' — NEVVA SocialPost.id ilk 8 char.")
-    x_utm_content  = fields.Char(string="UTM Content",  copy=False,
-                                  help="Dil kodu — fr / nl / en / tr.")
-    x_nevva_attribution_sent = fields.Boolean(
-        string="NEVVA Attribution Sent", default=False, copy=False, readonly=True,
-        help="Lead webhook NEVVA'ya gönderildi mi (idempotency koruması).",
-    )
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        """Lead create event — utm_campaign='post_*' varsa NEVVA webhook'a HMAC POST."""
-        records = super().create(vals_list)
-        for lead in records:
-            try:
-                lead._nevva_notify_social_attribution(kind="lead")
-            except Exception as e:
-                _logger.warning("NEVVA lead attribution notify fail (lead=%s): %s", lead.id, e)
-        return records
-
-    def _nevva_notify_social_attribution(self, kind="lead", sale_amount_eur=None,
-                                          sale_order_id=None):
-        """NEVVA backend webhook'ı — Social Studio attribution kapatma.
-
-        Akış:
-          - x_utm_campaign 'post_' ile başlamıyor → skip (NEVVA dışı kaynak)
-          - x_nevva_attribution_sent=True (kind='lead' için) → skip (idempotent)
-          - HMAC: X-Odoo-Source = nevva_planner.inbound_secret (admin config)
-          - Endpoint: <nevva_url>/api/social/webhooks/lead-attribution
-        """
-        self.ensure_one()
-        campaign = (self.x_utm_campaign or "").strip()
-        if not campaign.startswith("post_"):
-            return  # NEVVA Social Studio'dan gelmiyor
-        if kind == "lead" and self.x_nevva_attribution_sent:
-            return  # idempotency: lead için bir kere gönderildi
-
-        icp = self.env["ir.config_parameter"].sudo()
-        nevva_url = _nevva_origin(icp.get_param("nevva_planner.url"))
-        secret = (icp.get_param("nevva_planner.inbound_secret") or "").strip()
-        if not nevva_url or not secret:
-            _logger.debug("NEVVA URL/secret yok — attribution webhook skip (lead=%s)", self.id)
-            return
-
-        try:
-            import requests
-        except ImportError:
-            _logger.warning("requests module yok — attribution webhook skip")
-            return
-
-        payload = {
-            "utm_campaign": campaign,
-            "utm_source":   (self.x_utm_source or "").strip() or None,
-            "utm_medium":   (self.x_utm_medium or "").strip() or None,
-            "utm_content":  (self.x_utm_content or "").strip() or None,
-            "odoo_lead_id": str(self.id),
-        }
-        if kind == "sale" and sale_order_id:
-            payload["odoo_sale_order_id"] = int(sale_order_id)
-            if sale_amount_eur is not None:
-                payload["sale_amount_eur"] = float(sale_amount_eur)
-        from datetime import datetime
-        payload["timestamp"] = datetime.utcnow().isoformat()
-
-        try:
-            r = requests.post(
-                f"{nevva_url}/api/social/webhooks/lead-attribution",
-                json=payload,
-                headers={"X-Odoo-Source": secret, "Content-Type": "application/json"},
-                timeout=8,
-            )
-            if r.status_code == 200:
-                if kind == "lead":
-                    self.with_context(skip_attribution=True).write(
-                        {"x_nevva_attribution_sent": True})
-                _logger.info("NEVVA attribution sent (lead=%s, kind=%s, campaign=%s)",
-                             self.id, kind, campaign)
-            else:
-                _logger.warning("NEVVA attribution webhook %s: %s %s",
-                                kind, r.status_code, r.text[:200])
-        except Exception as e:
-            _logger.warning("NEVVA attribution webhook exception (kind=%s): %s", kind, e)
 
     def nevva_get_planner_payload(self):
         """JS client action stateless fetch:
