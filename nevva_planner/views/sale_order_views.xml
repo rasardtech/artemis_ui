@@ -39,6 +39,11 @@
                         icon="fa-image"
                         help="fal.ai ile üretilmiş foto-gerçekçi render görselini aç."
                         invisible="not nevva_render_url"/>
+                <!-- nevva_snapshot_count "NEVVA Geçmişi" sekmesinin invisible
+                     modifier'ında kullanılıyor → view'de MEVCUT olmalı (Odoo 17).
+                     Eski smart button kaldırılınca alan view'den düşmüştü →
+                     ParseError. Görünmez alan olarak header'da tutulur. -->
+                <field name="nevva_snapshot_count" invisible="1"/>
             </xpath>
 
             <!-- Sipariş satırları sekmesinden sonra "NEVVA Tasarım" sekmesi -->
