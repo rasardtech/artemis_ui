@@ -12,321 +12,414 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
-# ── Buttons / actions ──────────────────────────────────────────────
+#. module: nevva_planner
 msgid "NEVVA Planner'da Aç"
 msgstr "Open in NEVVA Planner"
 
+#. module: nevva_planner
 msgid "AR'da Gör"
 msgstr "View in AR"
 
+#. module: nevva_planner
 msgid "AI Render"
 msgstr "AI Render"
 
+#. module: nevva_planner
 msgid "↩ Planner'da Geri Dön"
 msgstr "↩ Restore in Planner"
 
+#. module: nevva_planner
 msgid "🖼 Render İndir"
 msgstr "🖼 Download render"
 
+#. module: nevva_planner
 msgid "📄 BOM PDF İndir"
 msgstr "📄 Download BOM PDF"
 
+#. module: nevva_planner
 msgid "💾 Proje JSON İndir"
 msgstr "💾 Download project JSON"
 
+#. module: nevva_planner
 msgid "NEVVA bağlantısını test et"
 msgstr "Test NEVVA connection"
 
-# ── Tabs / pages ───────────────────────────────────────────────────
+#. module: nevva_planner
 msgid "NEVVA Tasarım"
 msgstr "NEVVA Design"
 
+#. module: nevva_planner
 msgid "NEVVA Geçmişi"
 msgstr "NEVVA History"
 
-# ── Groups / sections ──────────────────────────────────────────────
+#. module: nevva_planner
 msgid "Proje"
 msgstr "Project"
 
+#. module: nevva_planner
 msgid "Bağlantılar"
 msgstr "Links"
 
+#. module: nevva_planner
 msgid "Görseller"
 msgstr "Images"
 
+#. module: nevva_planner
 msgid "Sipariş PDF"
 msgstr "Order PDF"
 
+#. module: nevva_planner
 msgid "Proje Verisi"
 msgstr "Project data"
 
+#. module: nevva_planner
 msgid "Montaj Puanı Kırılımı"
 msgstr "Installation points breakdown"
 
+#. module: nevva_planner
 msgid "Bilgiler"
 msgstr "Information"
 
+#. module: nevva_planner
 msgid "Tutarlar"
 msgstr "Amounts"
 
+#. module: nevva_planner
 msgid "Eski Render"
 msgstr "Old render"
 
+#. module: nevva_planner
 msgid "Eski Dosyalar"
 msgstr "Old files"
 
+#. module: nevva_planner
 msgid "Eski Sipariş Satırları"
 msgstr "Old order lines"
 
-# ── Fields / columns ───────────────────────────────────────────────
+#. module: nevva_planner
 msgid "Sipariş"
 msgstr "Order"
 
+#. module: nevva_planner
 msgid "Kaynak CRM Fırsatı"
 msgstr "Source CRM opportunity"
 
+#. module: nevva_planner
 msgid "Tarih"
 msgstr "Date"
 
+#. module: nevva_planner
 msgid "Gönderen"
 msgstr "Sender"
 
+#. module: nevva_planner
 msgid "Dil"
 msgstr "Language"
 
+#. module: nevva_planner
 msgid "Satır Sayısı"
 msgstr "Line count"
 
+#. module: nevva_planner
 msgid "Satır"
 msgstr "Lines"
 
+#. module: nevva_planner
 msgid "HT Tutar"
 msgstr "Amount excl. VAT"
 
+#. module: nevva_planner
 msgid "TTC Tutar"
 msgstr "Amount incl. VAT"
 
+#. module: nevva_planner
 msgid "Para Birimi"
 msgstr "Currency"
 
+#. module: nevva_planner
 msgid "Para"
 msgstr "Currency"
 
+#. module: nevva_planner
 msgid "HT (€)"
 msgstr "Excl. VAT (€)"
 
+#. module: nevva_planner
 msgid "TTC (€)"
 msgstr "Incl. VAT (€)"
 
+#. module: nevva_planner
 msgid "Eski Render URL"
 msgstr "Old render URL"
 
+#. module: nevva_planner
 msgid "Eski BOM PDF"
 msgstr "Old BOM PDF"
 
+#. module: nevva_planner
 msgid "Eski Proje JSON"
 msgstr "Old project JSON"
 
+#. module: nevva_planner
 msgid "Eski Ekran Görüntüsü"
 msgstr "Old screenshot"
 
-# ── Settings / partner ─────────────────────────────────────────────
+#. module: nevva_planner
 msgid "B2B Planner erişimi"
 msgstr "B2B Planner access"
 
+#. module: nevva_planner
 msgid "Bağlantı testi"
 msgstr "Connection test"
 
+#. module: nevva_planner
 msgid "Satıcı satır kilidi"
 msgstr "Seller line lock"
 
-# ── Model field labels ─────────────────────────────────────────────
+#. module: nevva_planner
 msgid "3D Görünüm"
 msgstr "3D View"
 
+#. module: nevva_planner
 msgid "NEVVA AI Render URL"
 msgstr "NEVVA AI render URL"
 
+#. module: nevva_planner
 msgid "NEVVA AR / 3D URL"
 msgstr "NEVVA AR / 3D URL"
 
+#. module: nevva_planner
 msgid "NEVVA Geçmiş Snapshot'lar"
 msgstr "NEVVA history snapshots"
 
+#. module: nevva_planner
 msgid "NEVVA Inbound Secret"
 msgstr "NEVVA inbound secret"
 
+#. module: nevva_planner
 msgid "NEVVA Planner URL"
 msgstr "NEVVA Planner URL"
 
+#. module: nevva_planner
 msgid "NEVVA Proje Verisi (JSON)"
 msgstr "NEVVA project data (JSON)"
 
+#. module: nevva_planner
 msgid "NEVVA Project ID"
 msgstr "NEVVA project ID"
 
+#. module: nevva_planner
 msgid "NEVVA tasarım satırlarını kilitle"
 msgstr "Lock NEVVA design lines"
 
+#. module: nevva_planner
 msgid "NEVVA: Bekleyen Değişiklik"
 msgstr "NEVVA: Pending change"
 
+#. module: nevva_planner
 msgid "PDF Dosya Adı"
 msgstr "PDF file name"
 
+#. module: nevva_planner
 msgid "Proje Verisi (JSON dosyası)"
 msgstr "Project data (JSON file)"
 
+#. module: nevva_planner
 msgid "Render"
 msgstr "Render"
 
+#. module: nevva_planner
 msgid "Satırlar JSON"
 msgstr "Lines (JSON)"
 
+#. module: nevva_planner
 msgid "Satırlar Tablosu"
 msgstr "Lines table"
 
+#. module: nevva_planner
 msgid "Snapshot Sayısı"
 msgstr "Snapshot count"
 
+#. module: nevva_planner
 msgid "Snapshot Tarihi"
 msgstr "Snapshot date"
 
-# ── Model description ──────────────────────────────────────────────
+#. module: nevva_planner
 msgid "NEVVA Sale Order Snapshot — Envoyer öncesi tasarım arşivi"
 msgstr "NEVVA Sale Order Snapshot — design archive before sending"
 
-# ── Help tooltips (single-line) ────────────────────────────────────
+#. module: nevva_planner
 msgid "Bu lead için NEVVA 3D mutfak planner'ını Odoo içinde aç. Müşteri bilgisi önceden doldurulur."
 msgstr "Open the NEVVA 3D kitchen planner inside Odoo for this lead. Customer info is pre-filled."
 
+#. module: nevva_planner
 msgid "Bu teklifin 3D tasarımını NEVVA planner'da yeni sekmede aç (HMAC-signed link)."
 msgstr "Open this quotation's 3D design in the NEVVA Planner (new tab, HMAC-signed link)."
 
+#. module: nevva_planner
 msgid "WebXR / AR görüntüleyicide tasarımı görüntüle (mobil cihaz önerilir)."
 msgstr "View the design in the WebXR / AR viewer (mobile device recommended)."
 
+#. module: nevva_planner
 msgid "fal.ai ile üretilmiş foto-gerçekçi render görselini aç."
 msgstr "Open the photorealistic render image generated by fal.ai."
 
+#. module: nevva_planner
 msgid "Teklifin planner'ını açar; Sürüm Geçmişi'nden bu/başka sürüme güvenle dönüp tekrar gönderebilirsin (sipariş doğrudan ezilmez)."
 msgstr "Opens the quotation's planner; from Version History you can safely restore this (or another) version and re-send (the order is not overwritten directly)."
 
+#. module: nevva_planner
 msgid "Kaydettikten sonra NEVVA'ya ping atar"
 msgstr "Pings NEVVA after saving"
 
+#. module: nevva_planner
 msgid "NEVVA .env'deki ODOO_INBOUND_SECRET ile aynı olmalı"
 msgstr "Must match ODOO_INBOUND_SECRET in NEVVA's .env"
 
+#. module: nevva_planner
 msgid "NEVVA planner adresi, örn. https://planner.electro-cuisine.be"
 msgstr "NEVVA Planner address, e.g. https://planner.electro-cuisine.be"
 
-# ── Tamamlama: UserError + uyarı bandı + uzun help ──
+#. module: nevva_planner
 msgid "Uyarı"
 msgstr "Warning"
 
+#. module: nevva_planner
 msgid "Bu tasarım NEVVA Planner'da değiştirildi ancak değişiklikler henüz gönderilmedi — bu teklifteki satırlar/görseller güncel olmayabilir. Güncel tasarımı görmek için \"NEVVA Planner'da Aç\" butonunu kullanın."
 msgstr "This design was modified in NEVVA Planner but the changes have not been sent yet — the lines/images in this quotation may be out of date. Use the \"Open in NEVVA Planner\" button to see the current design."
 
+#. module: nevva_planner
 msgid "NEVVA Planner yalnız satış ekibi tarafından açılabilir."
 msgstr "NEVVA Planner can only be opened by the sales team."
 
+#. module: nevva_planner
 msgid "NEVVA Planner yapılandırılmadı.\nSettings → NEVVA Planner bölümünden URL ve Inbound Secret girin."
 msgstr "NEVVA Planner is not configured.\nEnter the URL and Inbound Secret in Settings → NEVVA Planner."
 
+#. module: nevva_planner
 msgid "NEVVA Planner başlatılamadı: %s"
 msgstr "Could not start NEVVA Planner: %s"
 
+#. module: nevva_planner
 msgid "NEVVA geçerli bir redirect_url döndürmedi."
 msgstr "NEVVA did not return a valid redirect URL."
 
+#. module: nevva_planner
 msgid "NEVVA güvensiz redirect_url döndürdü (scheme: %s)"
 msgstr "NEVVA returned an unsafe redirect URL (scheme: %s)"
 
+#. module: nevva_planner
 msgid "NEVVA başka bir host'a redirect döndürdü: %s"
 msgstr "NEVVA returned a redirect to another host: %s"
 
+#. module: nevva_planner
 msgid "Bu teklife bağlı bir %s linki yok."
 msgstr "No %s link is attached to this quotation."
 
+#. module: nevva_planner
 msgid "Bu satır NEVVA tasarımına bağlı bir teklife ait — doğrudan düzenlenemez. Değişiklik için NEVVA planner'da düzenleyip 'Envoyer' ile yeniden gönderin. (Sadece yönetici doğrudan değiştirebilir.)"
 msgstr "This line belongs to a quotation linked to a NEVVA design — not directly editable. To change it, edit in NEVVA Planner and re-send with 'Envoyer'. (Only an administrator can edit directly.)"
 
+#. module: nevva_planner
 msgid "Bu sürümde %s yok."
 msgstr "No %s in this version."
 
+#. module: nevva_planner
 msgid "Bu snapshot bir siparişe bağlı değil."
 msgstr "This snapshot is not linked to any order."
 
+#. module: nevva_planner
 msgid "Önce NEVVA URL girin ve kaydedin."
 msgstr "First enter and save the NEVVA URL."
 
+#. module: nevva_planner
 msgid "NEVVA'ya bağlanılamadı: %s"
 msgstr "Could not connect to NEVVA: %s"
 
+#. module: nevva_planner
 msgid "NEVVA bağlantısı"
 msgstr "NEVVA connection"
 
+#. module: nevva_planner
 msgid "Bağlantı başarılı — durum: %s"
 msgstr "Connection successful — status: %s"
 
+#. module: nevva_planner
 msgid "Müşterinin telefonunda AR (artırılmış gerçeklik) görünümü linki."
 msgstr "AR (augmented reality) view link on the customer's phone."
 
+#. module: nevva_planner
 msgid "NEVVA fiş/teknik döküm PDF'i — sekmede satır içi görüntülenir."
 msgstr "NEVVA spec/technical sheet PDF — displayed inline in the tab."
 
+#. module: nevva_planner
 msgid "Müşteri/temsilci tasarımı NEVVA Planner'da değiştirdi ama henüz Odoo'ya göndermedi. Bu tekliftekiler güncel olmayabilir."
 msgstr "The customer/rep modified the design in NEVVA Planner but has not yet sent it to Odoo. The contents of this quotation may be out of date."
 
+#. module: nevva_planner
 msgid "Bu teklifin montaj puanı hangi modül/panel/extra'lardan toplandı? NEVVA gönderiminde otomatik üretilir; satıcı bu kırılıma bakıp müşteriye fiyat itirazlarında savunma yapar."
 msgstr "Which modules/panels/extras make up this quotation's installation points? Generated automatically on NEVVA send; the seller uses it to justify pricing to the customer."
 
+#. module: nevva_planner
 msgid "İşaretli ise bu kontak NEVVA planner B2B moduna kendi e-posta + Odoo parolası ile giriş yapabilir. İşaretsiz hesaplar Odoo'da doğrulansa bile B2B planner'a alınmaz."
 msgstr "If checked, this contact can log in to NEVVA Planner B2B mode with their own email + Odoo password. Unchecked accounts are not admitted to the B2B planner even if verified in Odoo."
 
+#. module: nevva_planner
 msgid "Envoyer'a basan satıcının email'i (NEVVA tarafından current_user_obj.email veya project.staff_email'den çözülür)."
 msgstr "Email of the seller who clicked Envoyer (resolved by NEVVA from current_user_obj.email or project.staff_email)."
 
+#. module: nevva_planner
 msgid "Snapshot oluştuğunda satıcının res.users.lang kısa kodu ('fr','en',...). Form view'da satır tablosu kolon başlıklarını bu dile göre gösterir."
 msgstr "Seller's res.users.lang short code at snapshot time ('fr','en',...). The line table column headers are shown in this language."
 
+#. module: nevva_planner
 msgid "Son açılan NEVVA planner linki (bu lead için)."
 msgstr "Last opened NEVVA Planner link (for this lead)."
 
+#. module: nevva_planner
 msgid "Bu teklifi oluşturan NEVVA planner projesinin kimliği."
 msgstr "ID of the NEVVA Planner project that created this quotation."
 
+#. module: nevva_planner
 msgid "Foto-realistik AI render görselinin orijinal linki."
 msgstr "Original link of the photorealistic AI render image."
 
+#. module: nevva_planner
 msgid "NEVVA planner 3D sahnesinin ekran görüntüsü."
 msgstr "Screenshot of the NEVVA Planner 3D scene."
 
+#. module: nevva_planner
 msgid "Planner'da yeniden yüklenebilir tam proje verisi."
 msgstr "Full project data, reloadable in the planner."
 
+#. module: nevva_planner
 msgid "Proje JSON'unu dosya olarak indir."
 msgstr "Download the project JSON as a file."
 
+#. module: nevva_planner
 msgid "Tasarımı NEVVA planner'da açmak için link."
 msgstr "Link to open the design in NEVVA Planner."
 
+#. module: nevva_planner
 msgid "Tasarımın foto-realistik AI render önizlemesi."
 msgstr "Photorealistic AI render preview of the design."
 
+#. module: nevva_planner
 msgid "Envoyer öncesi nevva_render_image alanından arşivlenen PNG."
 msgstr "PNG archived from the nevva_render_image field before sending."
 
+#. module: nevva_planner
 msgid "Örn: https://planner.electro-cuisine.be"
 msgstr "e.g. https://planner.electro-cuisine.be"
 
+#. module: nevva_planner
 msgid "NEVVA .env'deki ODOO_INBOUND_SECRET ile birebir aynı olmalı."
 msgstr "Must be exactly identical to ODOO_INBOUND_SECRET in NEVVA's .env."
 
+#. module: nevva_planner
 msgid "Açıkken satıcı NEVVA-bağlı sale.order satırlarını manuel düzenleyemez (değişiklik için planner'a dön + Envoyer). XMLRPC akışları context bypass ile etkilenmez. KAPALIYKEN serbestlik var ama veri tutarlılığı satıcıya bağlı."
 msgstr "When on, the seller cannot manually edit NEVVA-linked sale.order lines (to change: go back to the planner + Envoyer). XMLRPC flows are unaffected (context bypass). Off: full freedom but data consistency is up to the seller."
 
+#. module: nevva_planner
 msgid "Açık ise satıcı (sistem yöneticisi olmayan) NEVVA-bağlı sale.order satırlarını manuel düzenleyemez — değişiklik için planner'a dönüp 'Envoyer' kullanmak zorunda. NEVVA backend XMLRPC çağrıları context flag'i ile bypass'lar.\n\nDEFAULT KAPALI: bu kısıt aktivasyon sırasında 502'ye yol açabilir (XMLRPC user'ın yetkisi/context propagation'a göre); test ortamında test edip emin olduktan sonra açın."
 msgstr "When on, the seller (non-admin) cannot manually edit NEVVA-linked sale.order lines — they must return to the planner and use 'Envoyer'. NEVVA backend XMLRPC calls bypass this via a context flag.\n\nOFF BY DEFAULT: this restriction can cause a 502 on activation (depending on the XMLRPC user's rights / context propagation); test in a test environment before enabling."
-
